@@ -6,7 +6,7 @@
 
 int main(int argc, char const *argv[]){
 	
-	printf("Hello\n");
+	printf("Hello 2\n");
 
 /*Pre-processing Functions*/
 	//attribute generator
