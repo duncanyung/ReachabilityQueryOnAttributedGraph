@@ -10,6 +10,11 @@ void Preprocessing(char const *argv[]){
 			printf("Attribute Generator\n");
 			const char* fileName = argv[2];
 			const char* attrFolderName = argv[3];
+			int numVAttr = atoi(argv[4]);
+			int numEAttr = atoi(argv[5]);
+			int maxDomainSize = atoi(argv[6]);
+			int minDomainSize = atoi(argv[7]);
+			printf("%s %s %d %d %d %d\n",fileName,attrFolderName,numVAttr,numEAttr,maxDomainSize,minDomainSize);
 			vector<vector<int> > topology;
 			
 			utility ut;
