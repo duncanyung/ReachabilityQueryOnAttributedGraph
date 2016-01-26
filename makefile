@@ -10,7 +10,7 @@
 LINK     = g++
 #LINKOPTS = -lm -lcryptopp
 
-UTIL = AttrGenerator.o utility.o ReadTopology.o
+UTIL = AttrGenerator.o utility.o
 #UTIL  = utility.o func.o dataobj.o blk_file.o MRtree.o
 #UTIL  = utility.o AttrGenerator.o
 
@@ -36,8 +36,6 @@ UTIL = AttrGenerator.o utility.o ReadTopology.o
 AttrGenerator.o: AttrGenerator.cpp AttrGenerator.h
 
 utility.o: utility.cpp utility.h
-
-ReadTopology.o: ReadTopology.cpp ReadTopology.h
 
 main: main.o $(UTIL)
 	$(LINK) -o main main.o $(UTIL) $(LINKOPTS)
