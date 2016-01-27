@@ -1,87 +1,53 @@
 #include "AttrGenerator.h"
 
-
-
-void AttrGenerator::generateVertexAttr(const char* attrFolderName,vector<vector<int> >& topology,int numVAttr,int maxDomainSize){
+void AttrGenerator::_generateAttribute(const char* attrFolderName,vector<vector<pair<int,int> > >& topology,int numAttr,int maxDomainSize,bool isEdge,int numEdge = 0){
 	srand(time(NULL));
 
 	char fileName[200];
-	sprintf(fileName,"%s/VertexAttr.txt",attrFolderName);
+	if(isEdge==true)
+		sprintf(fileName,"%s/EdgeAttr.txt",attrFolderName);
+	else
+		sprintf(fileName,"%s/VertexAttr.txt",attrFolderName);
+
 	FILE * outFile = fopen(fileName,"w");
-	fprintf(outFile,"Num_Attr %d\n",numVAttr);
-//	fprintf(outFile,"Domain_Size ");
+	fprintf(outFile,"Num_Attr %d\n",numAttr);
 
 	vector<int> attrDomainSize;
-	for(int i=0; i<numVAttr; i++){
+	for(int i=0; i<numAttr; i++){
 		int d = max(rand()%maxDomainSize,1);
 		attrDomainSize.push_back(d);
-//		fprintf(outFile,"%d ",d);
 	}
-//	fprintf(outFile,"\n");
 
-	for(int i=1;i<=topology.size();i++){
+	int numRow = 0;
+
+	if(isEdge==true)
+		numRow = numEdge;
+	else
+		numRow = topology.size();
+
+	for(int i=1;i<=numRow;i++){
 		string attr=to_string(i);
 		attr.append(",");
-		for(int j=0; j<numVAttr; j++){
+		for(int j=0; j<numAttr; j++){
 			int temp=rand()%attrDomainSize[j];
 			attr.append(to_string(temp));
 			attr.append(",");
 		}
 
 		fprintf(outFile,"%s\n",attr.c_str());
-		if(i%10000==0)
+		if(i%10000==0 && isEdge==false)
 			printf("Generating Vertex Attr %d\n",i);
+		else if (i%10000==0 && isEdge==true)
+			printf("Generating Edge Attr %d\n",i);
 	}
 
 	fclose(outFile);
 }
 
-void AttrGenerator::generateEdgeAttr(const char* attrFolderName,vector<vector<int> >& topology,int numEAttr,int maxDomainSize){
-	srand(time(NULL));
 
-	char fileName[200];
-	sprintf(fileName,"%s/EdgeAttr.txt",attrFolderName);
-	FILE * outFile = fopen(fileName,"w");
-	fprintf(outFile,"Num_Attr %d\n",numEAttr);
-//	fprintf(outFile,"Domain Size ");
+void AttrGenerator::generateAttribute(const char* attrFolderName,vector<vector<pair<int,int> > >& topology,int numVAttr,int numEAttr,int maxDomainSize,int numEdge){
 
-	vector<int> attrDomainSize;
-	for(int i=0; i<numEAttr; i++){
-		int d = max(rand()%maxDomainSize,1);
-		attrDomainSize.push_back(d);
-//		fprintf(outFile,"%d ",d);
-	}
-//	fprintf(outFile,"\n");
+	_generateAttribute(attrFolderName,topology,numVAttr,maxDomainSize,false);
+	_generateAttribute(attrFolderName,topology,numEAttr,maxDomainSize,true,numEdge);
 
-	int edgeCount=0;
-	for(int i=1;i<=topology.size();i++){
-		for(int j=0;j<topology[i].size();j++){
-			string attr=to_string(i);
-			attr.append(",");
-			attr.append(to_string(topology[i][j]));
-			attr.append(",");
-
-			for(int k=0; k<numEAttr; k++){
-				int temp=rand()%attrDomainSize[k];
-				attr.append(to_string(temp));
-				attr.append(" ");
-			}
-
-			fprintf(outFile,"%s\n",attr.c_str());
-			if(edgeCount%10000==0)
-				printf("Generating Edge Attr %d\n",edgeCount);
-
-			edgeCount++;
-		}
-	}
-
-	fclose(outFile);
 }
-
-void AttrGenerator::generateAttribute(const char* attrFolderName,vector<vector<int> >& topology,int numVAttr,int numEAttr,int maxDomainSize){
-
-	generateVertexAttr(attrFolderName,topology,numVAttr,maxDomainSize);
-	generateEdgeAttr(attrFolderName,topology,numEAttr,maxDomainSize);
-}
-
-

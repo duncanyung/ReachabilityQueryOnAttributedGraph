@@ -1,33 +1,26 @@
 #include "utility.h"
 
 
-
-unsigned long long utility::hashFunction(vector<int>& attr){
-	unsigned long long value=0;
-	unsigned long long c=13;
-	for(int i=0; i<attr.size(); i++){
-		value=value+attr[i]*c;
-		c=c*c;
-	}
-	//9223372036854775783 is a prime number close to half of ULLONG_MAX
-	unsigned long long hashValue = value%9223372036854775783;
-
-	return hashValue;
-}
-
-void utility::readTopolgy(const char* fileName,vector<vector<int> >& topology){
+int utility::readTopolgy(const char* fileName,vector<vector<pair<int,int> > >& topology){
 	printf("Read Topology\n");
+
+	int numEdge = 0;
+
 	string sFileName(fileName);
 	if(sFileName.find("soc-pokec-relationships")!=string::npos)
-		readTopologyFormat1(fileName,topology);
+		numEdge = readTopologyFormat1(fileName,topology);
+
+	return numEdge;
 }
 
-void utility::scanTopologyFormat1(const char* fileName,vector<vector<int> >& topology,bool collectInfo){
+int utility::scanTopologyFormat1(const char* fileName,vector<vector<pair<int,int> > >& topology,bool collectInfo){
 	string line;
-	char split_char=' ';
+	char split_char='\t';
 	int maxID=0;
 	int minID=INT_MAX;
-	int lineCount=0,edgeCount=0;
+	int lineCount=0,edgeIDCount=1;
+
+	unordered_map<pair<int,int>,int,pairHash> edgeMap;
 
 	ifstream inFile(fileName);
 	while(getline(inFile,line)){
@@ -37,36 +30,46 @@ void utility::scanTopologyFormat1(const char* fileName,vector<vector<int> >& top
 			tokens.push_back(stoi(each));
 			maxID=max(stoi(each),maxID);
 			minID=min(stoi(each),minID);
-
-			edgeCount++;
 		}
 		lineCount++;
 		if(lineCount%100000==0)
 			printf("Reading line %d\n",lineCount);
 
 		if(collectInfo==false){
-			topology[tokens[0]].push_back(tokens[1]);
+			int eID = 0;
+
+			pair<int,int> p = make_pair(min(tokens[0],tokens[1]),max(tokens[0],tokens[1]));
+			unordered_map<pair<int,int>,int,pairHash>::const_iterator got = edgeMap.find(p);
+
+			if(got==edgeMap.end()){
+				edgeMap.insert(make_pair(p,edgeIDCount));
+				eID = edgeIDCount;
+				edgeIDCount++;
+			}else{
+				eID = got->second;
+			}
+
+			topology[tokens[0]].push_back(pair<int,int>(tokens[1],eID));
 		}
 	}
 	inFile.close();
 
-	printf("min Vertex ID=%d max Vertex ID=%d lineCount=%d EdgeCount=%d\n",minID,maxID,lineCount,edgeCount);
+	printf("min Vertex ID=%d max Vertex ID=%d lineCount=%d EdgeCount=%d\n",minID,maxID,lineCount,edgeIDCount);
 
-	if(collectInfo==true){
-		vector<int> adj;
-		topology.assign(maxID,adj);
-	}
+	return edgeIDCount;
 }
 
-void utility::readTopologyFormat1(const char* fileName,vector<vector<int> >& topology){
+int  utility::readTopologyFormat1(const char* fileName,vector<vector<pair<int,int> > >& topology){
 
 //	scanTopologyFormat1(fileName,topology,true); //collect info only
-	vector<int> adj;
-	topology.assign(1632803,adj);
-	scanTopologyFormat1(fileName,topology,false); //put tings into topology
+	vector<pair<int,int> > adj;
+	topology.assign(soc_pokec_vertex_size,adj);
+	return scanTopologyFormat1(fileName,topology,false); //put tings into topology
 
 }
 
+void utility::readAttrHash(const char* attrFolderName,vector<int>& hashValues,bool isEdge){
 
+}
 
 
