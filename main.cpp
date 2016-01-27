@@ -1,5 +1,6 @@
 #include "AttrGenerator.h"
-
+#include "ComputeHashValue.h"
+#include "utility.h"
 
 void Preprocessing(char const *argv[]){
 	printf("Do Preprocessing\n");
@@ -8,22 +9,27 @@ void Preprocessing(char const *argv[]){
 	switch(function +'0'){
 		case '1':{//attribute generator
 			printf("Attribute Generator\n");
+
+			//prase parameters
 			const char* fileName = argv[2];
 			const char* attrFolderName = argv[3];
 			int numVAttr = atoi(argv[4]);
 			int numEAttr = atoi(argv[5]);
 			int maxDomainSize = atoi(argv[6]);
-			int minDomainSize = atoi(argv[7]);
-			printf("%s %s %d %d %d %d\n",fileName,attrFolderName,numVAttr,numEAttr,maxDomainSize,minDomainSize);
+			printf("%s %s %d %d %d\n",fileName,attrFolderName,numVAttr,numEAttr,maxDomainSize);
 			vector<vector<int> > topology;
 			
+			//read topology
 			utility ut;
 			ut.readTopolgy(fileName,topology);
+
+			//generate attribute on the topology
 			AttrGenerator genAttr;
-		//	genAttr.generatorAttribute(folderName,topology);
+			genAttr.generateAttribute(attrFolderName,topology,numVAttr,numEAttr,maxDomainSize);
+
 			break;
-		}case '2':{//pre-processing attributes to individual files 
-			printf("pre-processing attributes to individual files\n");
+		}case '2':{//pre-processing real data attributes
+			printf("pre-processing real data attributes\n");
 			
 			//One vertex/edge attribute 1 file. Is that correct?
 				//read attribute and put them into individual files
@@ -32,6 +38,14 @@ void Preprocessing(char const *argv[]){
 			break;
 		}case '3':{//hash scheme index construction
 			printf("hash scheme index construction\n");
+
+			//prase parameters
+			const char* attrFolderName = argv[2];
+			const char* hashFolderName = argv[3];
+
+			//Compute and store Hash Value to File
+			ComputeHashValue ch;
+			ch.computeHashValue(hashFolderName,attrFolderName);
 
 			break;
 		}case '4':{//super-graph construction [not to use super graph first]

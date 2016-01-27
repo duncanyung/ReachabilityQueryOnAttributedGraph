@@ -2,6 +2,19 @@
 
 
 
+unsigned long long utility::hashFunction(vector<int>& attr){
+	unsigned long long value=0;
+	unsigned long long c=13;
+	for(int i=0; i<attr.size(); i++){
+		value=value+attr[i]*c;
+		c=c*c;
+	}
+	//9223372036854775783 is a prime number close to half of ULLONG_MAX
+	unsigned long long hashValue = value%9223372036854775783;
+
+	return hashValue;
+}
+
 void utility::readTopolgy(const char* fileName,vector<vector<int> >& topology){
 	printf("Read Topology\n");
 	string sFileName(fileName);
@@ -47,7 +60,9 @@ void utility::scanTopologyFormat1(const char* fileName,vector<vector<int> >& top
 
 void utility::readTopologyFormat1(const char* fileName,vector<vector<int> >& topology){
 
-	scanTopologyFormat1(fileName,topology,true); //collect info only
+//	scanTopologyFormat1(fileName,topology,true); //collect info only
+	vector<int> adj;
+	topology.assign(1632803,adj);
 	scanTopologyFormat1(fileName,topology,false); //put tings into topology
 
 }
