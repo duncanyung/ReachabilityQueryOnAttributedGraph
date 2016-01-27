@@ -11,7 +11,7 @@ echo start_Run_Expr_Script
 	hashFolderName='/Users/duncan/Documents/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/soc-pokec/'
 	numVAttr=10
 	numEAttr=10
-	maxDomainSize=100
+	maxDomainSize=20
 #	./main 1 $fileName $attrFolderName $numVAttr $numEAttr $maxDomainSize
 	./main 3 $fileName $attrFolderName $hashFolderName
 
