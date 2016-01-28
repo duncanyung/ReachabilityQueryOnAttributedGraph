@@ -46,7 +46,10 @@ void AttrGenerator::_generateAttribute(const char* attrFolderName,vector<vector<
 		for(int j=0; j<numAttr; j++){
 			int temp=rand()%attrDomainSize[j];
 			attr.append(to_string(temp));
-			attr.append(",");
+			if(j==numAttr-1)
+				attr.append(",,");
+			else
+				attr.append(",");
 		}
 
 		int extraSpace = numDigit2 + (numAttr*numDigit1+numAttr+1) - attr.length();

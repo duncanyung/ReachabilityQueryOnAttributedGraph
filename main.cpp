@@ -69,6 +69,8 @@ void Query(char const *argv[]){
 	const char* hashFolderName = argv[4];
 	int numEAttr = atoi(argv[5]);
 	int numVAttr = atoi(argv[6]);
+	int vRowSize = atoi(argv[7]);
+	int eRowSize = atoi(argv[8]);
 
 
 	//read graph topology into memory
@@ -90,8 +92,7 @@ void Query(char const *argv[]){
 	//query algorithm
 	printf("topology size=%ld  vertexHashValues size=%ld edgeHashValue size=%ld\n",topology.size(),vertexHashValues.size(),edgeHashValues.size());
 	QueryHandler qh;
-	int vRowSize = 7 + 20 + 11 + 1;//[hard code here first]
-	int eRowSize = 7 + 20 + 11 + 1;//[hard code here first]
+	
 	for(int i=0; i<queries.size(); i++){
 		bool ans = qh.CReachabilityQuery(topology,vertexHashValues,edgeHashValues,queries[i],attrFolderName,vRowSize,eRowSize);
 		printf("Reachable = %d\n",ans);

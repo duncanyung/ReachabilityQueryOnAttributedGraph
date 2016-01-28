@@ -12,8 +12,10 @@ echo start_Run_Expr_Script
 	numVAttr=10
 	numEAttr=10
 	maxDomainSize=20
+	vRowSize=38
+	eRowSize=38
 	#generate Attribute
-	./main 1 $fileName $attrFolderName $numVAttr $numEAttr $maxDomainSize
+	./main 1 $fileName $attrFolderName $numVAttr $numEAttr $maxDomainSize $vRowSize $eRowSize
 
 	#generate hash value
 #	./main 3 $fileName $attrFolderName $hashFolderName

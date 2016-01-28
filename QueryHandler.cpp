@@ -82,6 +82,19 @@ bool QueryHandler::CheckConstraint(int id, vector<unsigned long long>& hashValue
 	return false;
 }
 
+void QueryHandler::split(const string &s, char delim, vector<int> &elems,bool skipFirst){
+    stringstream ss(s);
+    string item;
+    while (getline(ss, item, delim)) {
+    	if(item.compare("")==0)
+    		break;
+
+    	if(skipFirst == false)
+        	elems.push_back(stoi(item));
+        skipFirst = false;
+    }
+}
+
 void QueryHandler::IOAttr(int id,const char* attrFileName,vector<int>& attr,ifstream& inf,int rowSize){
 	//use fseek here!
 
@@ -91,6 +104,7 @@ void QueryHandler::IOAttr(int id,const char* attrFileName,vector<int>& attr,ifst
 	inf.seekg(addr);
 	getline(inf,strData);
 
+	split(strData,',',attr,true);
 
 }
 
