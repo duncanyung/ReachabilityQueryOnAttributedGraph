@@ -1,6 +1,8 @@
 #include "AttrGenerator.h"
 #include "ComputeHashValue.h"
 #include "utility.h"
+//#include "query.h"
+#include "QueryHandler.h"
 
 void Preprocessing(char const *argv[]){
 	printf("Do Preprocessing\n");
@@ -68,9 +70,6 @@ void Query(char const *argv[]){
 	int numEAttr = atoi(argv[5]);
 	int numVAttr = atoi(argv[6]);
 
-	//query generator
-//	QueryGenerator qg;
-//	gg.generateQuery();
 
 	//read graph topology into memory
 	utility ut;
@@ -78,13 +77,23 @@ void Query(char const *argv[]){
 	int numEdge = ut.readTopolgy(fileName,topology);
 
 	//read hash values into memory
-	vector<int> vertexHashValues,edgeHashValues;
-	ut.readAttrHash(hashFolderName,vertexHashValues,true);
-	ut.readAttrHash(hashFolderName,edgeHashValues,false);
+	vector<unsigned long long> vertexHashValues,edgeHashValues;
+	ut.readAttrHash(hashFolderName,vertexHashValues,false);
+	ut.readAttrHash(hashFolderName,edgeHashValues,true);
+
+	//query generator
+	vector<query> queries;
+//	QueryGenerator qg;
+//	gg.generateQuery();
 
 	//Start Timer HERE!
 	//query algorithm
-
+	printf("topology size=%ld  vertexHashValues size=%ld edgeHashValue size=%ld\n",topology.size(),vertexHashValues.size(),edgeHashValues.size());
+	QueryHandler qh;
+	for(int i=0; i<queries.size(); i++){
+		bool ans = qh.CReachabilityQuery(topology,vertexHashValues,edgeHashValues,queries[i],attrFolderName);
+		printf("Reachable = %d\n",ans);
+	}
 	//End Timer HERE!
 }
 

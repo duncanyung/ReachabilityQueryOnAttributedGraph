@@ -68,8 +68,30 @@ int  utility::readTopologyFormat1(const char* fileName,vector<vector<pair<int,in
 
 }
 
-void utility::readAttrHash(const char* attrFolderName,vector<int>& hashValues,bool isEdge){
+void utility::readAttrHash(const char* attrFolderName,vector<unsigned long long>& hashValues,bool isEdge){
+	char fileName[200];
+	if(isEdge==true)
+		sprintf(fileName,"%s/EdgeAttrHash.txt",attrFolderName);
+	else
+		sprintf(fileName,"%s/VertexAttrHash.txt",attrFolderName);
 
+	FILE* inFile = fopen(fileName,"r");
+
+	int id = 0;
+	unsigned long long hashValue = 0;
+	int count = 0;
+	while(fscanf(inFile,"%d %lld\n",&id,&hashValue)!=EOF){
+		hashValues.push_back(hashValue);
+
+		if(count%10000 == 0 && isEdge == true)
+			printf("Reading Edge Hash Value %d\n",count);
+		else if(count%10000 == 0 && isEdge == false)
+			printf("Reading Vertex Hash Value %d\n",count);
+
+		count++;
+	}
+
+	fclose(inFile);
 }
 
 

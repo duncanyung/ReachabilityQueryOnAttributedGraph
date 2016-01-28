@@ -13,7 +13,8 @@ echo start_Run_Expr_Script
 	numEAttr=10
 	maxDomainSize=20
 #	./main 1 $fileName $attrFolderName $numVAttr $numEAttr $maxDomainSize
-	./main 3 $fileName $attrFolderName $hashFolderName
+#	./main 3 $fileName $attrFolderName $hashFolderName
+	./main 5 $fileName $attrFolderName $hashFolderName 10 10
 
 #	COUNT=10000
 #	while [ $COUNT -le 100000 ]; do

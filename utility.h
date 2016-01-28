@@ -29,6 +29,6 @@ class utility{
 		int readTopolgy(const char*,vector<vector<pair<int,int> > >&);
 		int readTopologyFormat1(const char*,vector<vector<pair<int,int> > >&);
 		int scanTopologyFormat1(const char*,vector<vector<pair<int,int> > >&,bool);
-		void readAttrHash(const char*,vector<int>&,bool);
+		void readAttrHash(const char*,vector<unsigned long long>&,bool);
 };
 
