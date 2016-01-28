@@ -79,6 +79,9 @@ bool QueryHandler::CheckConstraint(int id, vector<unsigned long long>& hashValue
 
 void QueryHandler::IOAttr(int id,const char* attrFileName,vector<int>& attr){
 	//use fseek here!
+
+	//get the id^th row in attrFileName
+	
 }
 
 bool QueryHandler::CheckAttr(vector<int>& attr,vector<vector<int> >& con){

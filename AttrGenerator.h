@@ -16,6 +16,7 @@ using namespace std;
 class AttrGenerator{
 
 public:
+	int countIntDigit(int);
 	void _generateAttribute(const char*,vector<vector<pair<int,int> > >&,int,int,bool,int);
 	void generateAttribute(const char*,vector<vector<pair<int,int> > >&,int,int,int,int);
 

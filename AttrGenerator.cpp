@@ -1,5 +1,14 @@
 #include "AttrGenerator.h"
 
+
+int AttrGenerator::countIntDigit(int x){
+	int length = 1;
+	while ( x /= 10 )
+	   length++;
+
+	return length;
+}
+
 void AttrGenerator::_generateAttribute(const char* attrFolderName,vector<vector<pair<int,int> > >& topology,int numAttr,int maxDomainSize,bool isEdge,int numEdge = 0){
 	srand(time(NULL));
 
@@ -19,6 +28,12 @@ void AttrGenerator::_generateAttribute(const char* attrFolderName,vector<vector<
 	}
 
 	int numRow = 0;
+	int numDigit1 = countIntDigit(maxDomainSize);
+	int numDigit2;
+	if(isEdge == true) 
+		numDigit2 = countIntDigit(numEdge);
+	else
+		numDigit2 = countIntDigit(topology.size());
 
 	if(isEdge==true)
 		numRow = numEdge;
@@ -33,6 +48,11 @@ void AttrGenerator::_generateAttribute(const char* attrFolderName,vector<vector<
 			attr.append(to_string(temp));
 			attr.append(",");
 		}
+
+		int extraSpace = numDigit2 + (numAttr*numDigit1+numAttr+1) - attr.length();
+
+		for(int j=0; j<extraSpace; j++)
+			attr.append(" ");
 
 		fprintf(outFile,"%s\n",attr.c_str());
 		if(i%10000==0 && isEdge==false)
