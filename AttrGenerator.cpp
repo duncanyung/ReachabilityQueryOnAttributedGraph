@@ -19,7 +19,7 @@ void AttrGenerator::_generateAttribute(const char* attrFolderName,vector<vector<
 		sprintf(fileName,"%s/VertexAttr.txt",attrFolderName);
 
 	FILE * outFile = fopen(fileName,"w");
-	fprintf(outFile,"Num_Attr %d\n",numAttr);
+//	fprintf(outFile,"Num_Attr %d\n",numAttr);
 
 	vector<int> attrDomainSize;
 	for(int i=0; i<numAttr; i++){

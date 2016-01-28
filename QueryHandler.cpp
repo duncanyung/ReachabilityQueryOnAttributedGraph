@@ -3,7 +3,8 @@
 
 
 bool QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >& topology,vector<unsigned long long>& vertexHashValues,
-											vector<unsigned long long>& edgeHashValues,query& q,const char* attrFolderName){
+											vector<unsigned long long>& edgeHashValues,query& q,const char* attrFolderName,
+											int vRowSize,int eRowSize){
 
 	queue<pair<int,int> > qu;
 	vector<bool> visited;
@@ -13,6 +14,8 @@ bool QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >& topology,
 	char vertexAttrFileName[200],edgeAttrFileName[200];
 	sprintf(vertexAttrFileName,"%s/VertexAttr.txt",attrFolderName);
 	sprintf(edgeAttrFileName,"%s/EdgeAttr.txt",attrFolderName);
+	ifstream infV(vertexAttrFileName);
+	ifstream infE(edgeAttrFileName);
 
 	while(!qu.empty()){
 		pair<int,int> h = qu.front();
@@ -22,31 +25,33 @@ bool QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >& topology,
 			continue;
 		visited[h.first]=true;
 
-		bool result = DFS_C(h.first,topology,vertexHashValues,edgeHashValues,q,qu,visited,satTableE,satTableV,vertexAttrFileName,edgeAttrFileName);
+		bool result = DFS_C(h.first,topology,vertexHashValues,edgeHashValues,q,qu,visited,satTableE,satTableV,
+							vertexAttrFileName,edgeAttrFileName,infV,infE,vRowSize,eRowSize);
 //		qu.push(make_pair());
 	}
 
-
+	infV.close();
+	infE.close();
 	return false;
 }
 
 bool QueryHandler::DFS_C(int cur, vector<vector<pair<int,int> > >& topology,vector<unsigned long long>& vertexHashValues,
 						vector<unsigned long long>& edgeHashValues,query& q,queue<pair<int,int> >& qu,vector<bool>& visited,
 						unordered_map<unsigned long long,bool>& satTableE,unordered_map<unsigned long long,bool>& satTableV,
-						const char* vertexAttrFileName,const char* edgeAttrFileName){
+						const char* vertexAttrFileName,const char* edgeAttrFileName,ifstream& infV,ifstream& infE,int vRowSize,int eRowSize){
 
 	for(int i=0; i<topology[cur].size(); i++){
 		if(topology[cur][i].first == q.dest)
 			return true;
 		if(visited[topology[cur][i].first]==false){
-			if(!CheckConstraint(topology[cur][i].second,edgeHashValues,q.edgeAttrCon,satTableE,edgeAttrFileName))//check Edge constraint
+			if(!CheckConstraint(topology[cur][i].second,edgeHashValues,q.edgeAttrCon,satTableE,edgeAttrFileName,infE,eRowSize))//check Edge constraint
 				continue;
 //			if(!CheckConstraint())//check vertex constraint
 //				continue;
 			
 			visited[topology[cur][i].first] = true;
 			bool result = DFS_C(topology[cur][i].first,topology,vertexHashValues,edgeHashValues,q,qu,visited,satTableE,satTableV,
-								vertexAttrFileName,edgeAttrFileName);
+								vertexAttrFileName,edgeAttrFileName,infV,infE,vRowSize,eRowSize);
 			if(result == true)
 				return true;
 		}
@@ -58,14 +63,14 @@ bool QueryHandler::DFS_C(int cur, vector<vector<pair<int,int> > >& topology,vect
 
 
 bool QueryHandler::CheckConstraint(int id, vector<unsigned long long>& hashValues,vector<vector<int> >& con,
-									unordered_map<unsigned long long,bool>& satTable,const char* attrFileName){
+									unordered_map<unsigned long long,bool>& satTable,const char* attrFileName,ifstream& inf,int rowSize){
 
 	unordered_map<unsigned long long,bool>::const_iterator got = satTable.find(hashValues[id]);
 	if(got!=satTable.end()){
 		return got->second; 
 	}else{
 		vector<int> attr;
-		IOAttr(id,attrFileName,attr);
+		IOAttr(id,attrFileName,attr,inf,rowSize);
 		if(CheckAttr(attr,con)){
 			satTable.insert(make_pair(hashValues[id],true));
 			return true;
@@ -77,11 +82,16 @@ bool QueryHandler::CheckConstraint(int id, vector<unsigned long long>& hashValue
 	return false;
 }
 
-void QueryHandler::IOAttr(int id,const char* attrFileName,vector<int>& attr){
+void QueryHandler::IOAttr(int id,const char* attrFileName,vector<int>& attr,ifstream& inf,int rowSize){
 	//use fseek here!
 
 	//get the id^th row in attrFileName
-	
+	string strData;
+	int addr = id*rowSize;
+	inf.seekg(addr);
+	getline(inf,strData);
+
+
 }
 
 bool QueryHandler::CheckAttr(vector<int>& attr,vector<vector<int> >& con){
