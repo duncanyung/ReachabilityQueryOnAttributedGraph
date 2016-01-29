@@ -18,5 +18,6 @@ class QueryGenerator{
 
 
 	public:
-		void generateQuery(vector<query>&,int,int,int,const char*);
+		int getAttributeInfo(char*,vector<int>&);
+		void generateQuery(vector<query>&,int,const char*,vector<vector<pair<int,int> > >&);
 };

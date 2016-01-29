@@ -88,7 +88,7 @@ void Query(char const *argv[]){
 	//query generator
 	vector<query> queries;
 	QueryGenerator qg;
-//	gg.generateQuery();
+	qg.generateQuery(queries,numQuery,attrFolderName,topology);
 
 	//Start Timer HERE!
 	//query algorithm
