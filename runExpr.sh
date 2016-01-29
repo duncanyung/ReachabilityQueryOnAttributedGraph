@@ -7,21 +7,23 @@ echo start_Run_Expr_Script
 
 	function=1
 	fileName='/Users/duncan/Documents/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/soc-pokec/soc-pokec-relationships.txt'
+
 	attrFolderName='/Users/duncan/Documents/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/soc-pokec/'
 	hashFolderName='/Users/duncan/Documents/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/soc-pokec/'
-	numVAttr=10
 	numEAttr=10
+	numVAttr=10
 	maxDomainSize=20
 	vRowSize=38
 	eRowSize=38
+	numQuery=10
 	#generate Attribute
-	./main 1 $fileName $attrFolderName $numVAttr $numEAttr $maxDomainSize $vRowSize $eRowSize
+	#./main 1 $fileName $attrFolderName $numVAttr $numEAttr $maxDomainSize $vRowSize $eRowSize
 
 	#generate hash value
-#	./main 3 $fileName $attrFolderName $hashFolderName
+	./main 3 $fileName $attrFolderName $hashFolderName
 
 	#query algorithm
-#	./main 5 $fileName $attrFolderName $hashFolderName 10 10
+#	./main 5 $fileName $attrFolderName $hashFolderName $numEAttr $numVAttr $vRowSize $eRowSize $numQuery
 
 #	COUNT=10000
 #	while [ $COUNT -le 100000 ]; do

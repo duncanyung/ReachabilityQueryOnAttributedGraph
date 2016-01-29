@@ -44,10 +44,12 @@ bool QueryHandler::DFS_C(int cur, vector<vector<pair<int,int> > >& topology,vect
 		if(topology[cur][i].first == q.dest)
 			return true;
 		if(visited[topology[cur][i].first]==false){
-			if(!CheckConstraint(topology[cur][i].second,edgeHashValues,q.edgeAttrCon,satTableE,edgeAttrFileName,infE,eRowSize))//check Edge constraint
+			//check Edge constraint
+			if(!CheckConstraint(topology[cur][i].second,edgeHashValues,q.edgeAttrCon,satTableE,edgeAttrFileName,infE,eRowSize))
 				continue;
-//			if(!CheckConstraint())//check vertex constraint
-//				continue;
+			//check Vertex constraint
+			if(!CheckConstraint(topology[cur][i].second,vertexHashValues,q.vertexAttrCon,satTableV,vertexAttrFileName,infV,vRowSize))
+				continue;
 			
 			visited[topology[cur][i].first] = true;
 			bool result = DFS_C(topology[cur][i].first,topology,vertexHashValues,edgeHashValues,q,qu,visited,satTableE,satTableV,

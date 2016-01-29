@@ -1,13 +1,15 @@
 #include "ComputeHashValue.h"
 #include "utility.h"
 
-void ComputeHashValue::_computeHashValue(char* attrHashFileName, char* attrFileName, bool isNode){
+void ComputeHashValue::_computeHashValue(char* attrHashFileName, char* attrFileName,char* attrInfoFileName, bool isNode){
 	FILE * attrFile = fopen(attrFileName,"r");
+	FILE * attrInfoFile = fopen(attrInfoFileName,"r");
 	FILE * hashFile = fopen(attrHashFileName,"w");
 
 	char s[10];
 	int numAttr = 0,ID = 0, ID2 = 0,count = 0;
-	fscanf(attrFile,"%s %d\n",s,&numAttr);
+	fscanf(attrInfoFile,"%s %d\n",s,&numAttr);
+	fclose(attrInfoFile);
 
 	utility ut;
 	const unsigned long long _prime = ut.prime;
@@ -22,7 +24,7 @@ void ComputeHashValue::_computeHashValue(char* attrHashFileName, char* attrFileN
 			hashValue = hashValue + temp*c;
 			c = c*c;
 		}
-		fscanf(attrFile,"\n");
+		fscanf(attrFile,",\n");
 		hashValue=hashValue%_prime;
 		fprintf(hashFile,"%d %lld\n",ID,hashValue);//assume count all = 1 first!!!
 
@@ -46,14 +48,18 @@ void ComputeHashValue::_computeHashValue(char* attrHashFileName, char* attrFileN
 
 void ComputeHashValue::computeHashValue(const char* hashFolderName,const char* attrFolderName){
 
-	char vertexAttrFileName[200],edgeAttrFileName[200],vertexAttrHashFileName[200],edgeAttrHashFileName[200];
+	char vertexAttrFileName[200],edgeAttrFileName[200],vertexAttrHashFileName[200],edgeAttrHashFileName[200],
+			vertexAttrInfoFileName[200],edgeAttrInfoFileName[200];
 	sprintf(vertexAttrHashFileName,"%s/VertexAttrHash.txt",hashFolderName);
 	sprintf(edgeAttrHashFileName,"%s/EdgeAttrHash.txt",hashFolderName);
-	sprintf(vertexAttrFileName,"%s/VertexAttr.txt",hashFolderName);
-	sprintf(edgeAttrFileName,"%s/EdgeAttr.txt",hashFolderName);
+	sprintf(vertexAttrFileName,"%s/VertexAttr.txt",attrFolderName);
+	sprintf(edgeAttrFileName,"%s/EdgeAttr.txt",attrFolderName);
+	sprintf(vertexAttrInfoFileName,"%s/VertexAttrInfo.txt",attrFolderName);
+	sprintf(edgeAttrInfoFileName,"%s/EdgeAttrInfo.txt",attrFolderName);
 
-	_computeHashValue(vertexAttrHashFileName,vertexAttrFileName,true);
-	_computeHashValue(edgeAttrHashFileName,edgeAttrFileName,false);
+
+	_computeHashValue(vertexAttrHashFileName,vertexAttrFileName,vertexAttrInfoFileName,true);
+	_computeHashValue(edgeAttrHashFileName,edgeAttrFileName,edgeAttrInfoFileName,false);
 }
 
 

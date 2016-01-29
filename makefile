@@ -10,7 +10,7 @@
 LINK     = g++
 #LINKOPTS = -lm -lcryptopp
 
-UTIL = AttrGenerator.o utility.o ComputeHashValue.o QueryHandler.o
+UTIL = AttrGenerator.o utility.o ComputeHashValue.o QueryHandler.o QueryGenerator.o
 #pairHash.o
 #UTIL  = utility.o func.o dataobj.o blk_file.o MRtree.o
 #UTIL  = utility.o AttrGenerator.o
@@ -35,6 +35,8 @@ UTIL = AttrGenerator.o utility.o ComputeHashValue.o QueryHandler.o
 #qmain.o: qmain.cc
 
 #pairHash.o: pairHash.h
+
+QueryGenerator.o: QueryGenerator.cpp QueryGenerator.h
 
 QueryHandler.o: QueryHandler.cpp QueryHandler.h
 

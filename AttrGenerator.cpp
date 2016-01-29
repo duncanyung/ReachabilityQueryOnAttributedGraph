@@ -12,20 +12,28 @@ int AttrGenerator::countIntDigit(int x){
 void AttrGenerator::_generateAttribute(const char* attrFolderName,vector<vector<pair<int,int> > >& topology,int numAttr,int maxDomainSize,bool isEdge,int numEdge = 0){
 	srand(time(NULL));
 
-	char fileName[200];
-	if(isEdge==true)
+	char fileName[200],infoFileName[200];
+	if(isEdge==true){
 		sprintf(fileName,"%s/EdgeAttr.txt",attrFolderName);
-	else
+		sprintf(infoFileName,"%s/EdgeAttrInfo.txt",attrFolderName);
+	}else{
 		sprintf(fileName,"%s/VertexAttr.txt",attrFolderName);
+		sprintf(infoFileName,"%s/VertexAttrInfo.txt",attrFolderName);
+	}
 
+	FILE * outInfoFile = fopen(infoFileName,"w");
 	FILE * outFile = fopen(fileName,"w");
-//	fprintf(outFile,"Num_Attr %d\n",numAttr);
+
+	fprintf(outInfoFile,"Num_Attr %d\n",numAttr);
+
 
 	vector<int> attrDomainSize;
 	for(int i=0; i<numAttr; i++){
 		int d = max(rand()%maxDomainSize,1);
 		attrDomainSize.push_back(d);
+		fprintf(outInfoFile,"%d ",d);
 	}
+	fclose(outInfoFile);
 
 	int numRow = 0;
 	int numDigit1 = countIntDigit(maxDomainSize);

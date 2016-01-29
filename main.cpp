@@ -2,7 +2,8 @@
 #include "ComputeHashValue.h"
 #include "utility.h"
 //#include "query.h"
-#include "QueryHandler.h"
+//#include "QueryHandler.h"
+#include "QueryGenerator.h"
 
 void Preprocessing(char const *argv[]){
 	printf("Do Preprocessing\n");
@@ -43,8 +44,8 @@ void Preprocessing(char const *argv[]){
 			printf("hash scheme index construction\n");
 
 			//prase parameters
-			const char* attrFolderName = argv[2];
-			const char* hashFolderName = argv[3];
+			const char* attrFolderName = argv[3];
+			const char* hashFolderName = argv[4];
 
 			//Compute and store Hash Value to File
 			ComputeHashValue ch;
@@ -71,6 +72,7 @@ void Query(char const *argv[]){
 	int numVAttr = atoi(argv[6]);
 	int vRowSize = atoi(argv[7]);
 	int eRowSize = atoi(argv[8]);
+	int numQuery = atoi(argv[9]);
 
 
 	//read graph topology into memory
@@ -85,7 +87,7 @@ void Query(char const *argv[]){
 
 	//query generator
 	vector<query> queries;
-//	QueryGenerator qg;
+	QueryGenerator qg;
 //	gg.generateQuery();
 
 	//Start Timer HERE!

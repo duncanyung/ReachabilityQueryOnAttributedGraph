@@ -13,6 +13,6 @@ using namespace std;
 class ComputeHashValue{
 
 public:
-	void _computeHashValue(char*,char*,bool);
+	void _computeHashValue(char*,char*,char*,bool);
 	void computeHashValue(const char*,const char*);
 };
