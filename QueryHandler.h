@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <string.h>
 #include <unistd.h>
+#include <unordered_set>
 
 #include "query.h"
 
@@ -20,6 +21,7 @@ using namespace std;
 class QueryHandler{
 
 	public:
+		void SuperGraphShortestPath(vector<vector<pair<int,int> > >&,unordered_set<int>&,int);
 		bool SimpleBFS(query&,vector<vector<pair<int,int> > >&);
 		bool DFS(int,vector<vector<pair<int,int> > >&,query&,vector<bool>&);
 		pair<bool,int> CReachabilityQuery(vector<vector<pair<int,int> > >&,vector<unsigned long long>&,vector<unsigned long long>&,query&,const char*,int,int,bool,bool);

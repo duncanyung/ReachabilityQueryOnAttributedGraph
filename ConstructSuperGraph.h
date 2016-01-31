@@ -8,16 +8,19 @@
 #include <time.h>
 #include <stdlib.h>
 #include <queue>
-#include <unordered_set>
+#include <unordered_map>
 #include <string.h>
+#include <unistd.h>
 
-#include "QueryHandler.h"
+
+using namespace std;
 
 
-class QueryGenerator{
 
+class ConstructSuperGraph{
 
 	public:
-		int getAttributeInfo(char*,vector<int>&);
-		void generateQuery(vector<query>&,int,const char*,vector<vector<pair<int,int> > >&);
+		void construct(int,vector<vector<pair<int,int> > >&,int,int,const char*);
 };
+
+

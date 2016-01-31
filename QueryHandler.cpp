@@ -20,7 +20,8 @@ pair<bool,int> QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >&
 	ifstream infV(vertexAttrFileName);
 	ifstream infE(edgeAttrFileName);
 
-	qu.push(make_pair(q.src,-1));
+	//no need to check constraint of src
+	qu.push(make_pair(q.src,-1));//the second element of this pair is the super-edge to be ignored in super graph SP search
 	while(!qu.empty()){
 		pair<int,int> h = qu.front();
 		qu.pop();
@@ -29,6 +30,12 @@ pair<bool,int> QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >&
 			continue;
 		visited[h.first]=true;
 
+///////////////////////Under Construction////////////////////////////////
+		unordered_set<int> SSP;
+		int SuperEIgnore = h.second;
+//		SuperGraphShortestPath(topology,SSP,SuperEIgnore);
+/////////////////////////////////////////////////////////////////////////
+
 		bool result = BFS_C(h.first,topology,vertexHashValues,edgeHashValues,q,qu,visited,satTableE,satTableV,
 							vertexAttrFileName,edgeAttrFileName,infV,infE,vRowSize,eRowSize,useConstraint,hashOpt);
 
@@ -36,7 +43,6 @@ pair<bool,int> QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >&
 
 		if(result == true)
 			return make_pair(true,IOCount);
-//		qu.push(make_pair());
 	}
 
 	infV.close();
@@ -44,6 +50,15 @@ pair<bool,int> QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >&
 
 	return make_pair(false,IOCount);
 }
+
+void QueryHandler::SuperGraphShortestPath(vector<vector<pair<int,int> > >& topology,unordered_set<int>& SSP,int SuperEIgnore){
+
+
+//	while(){
+
+//	}
+}
+
 
 bool QueryHandler::BFS_C(int cur,vector<vector<pair<int,int> > >& topology,vector<unsigned long long>& vertexHashValues,
 						vector<unsigned long long>& edgeHashValues,query& q,queue<pair<int,int> >& quGlobal,vector<bool>& visited,
@@ -74,8 +89,17 @@ bool QueryHandler::BFS_C(int cur,vector<vector<pair<int,int> > >& topology,vecto
 			//check Vertex constraint
 			if(useConstraint && (!CheckConstraint(adjVertex,vertexHashValues,q.vertexAttrCon,satTableV,vertexAttrFileName,infV,vRowSize,hashOpt)))
 				continue;
-			
-			qu.push(make_pair(adjVertex,-1));
+
+			////////////////////////Under Construction//////////////////////////////
+			//if the vertex is in the super path, do below
+			//if(withinSSP(SP,S[adjVertex])
+				//SP is a unordered_Map that store the super node in spuer path
+				//S is a vector that store which super node this adjVertex belong to
+				qu.push(make_pair(adjVertex,-1));
+			//else
+				//put this vertex in the quGlobal
+				//quGlobal.push(make_pair(adjVertex,...));
+			////////////////////////////////////////////////////////////////////////
 		}
 	}
 	return false;

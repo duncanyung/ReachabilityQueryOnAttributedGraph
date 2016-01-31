@@ -4,6 +4,7 @@
 //#include "query.h"
 //#include "QueryHandler.h"
 #include "QueryGenerator.h"
+#include "ConstructSuperGraph.h"
 
 #include <ctime>
 
@@ -55,6 +56,21 @@ void Preprocessing(char const *argv[]){
 			break;
 		}case '4':{//super-graph construction [not to use super graph first]
 			printf("super-graph construction\n");
+
+			const char* fileName = argv[2];
+			const char* attrFolderName = argv[3];
+			int numVAttr = atoi(argv[4]);
+			int numEAttr = atoi(argv[5]);
+			int numSuperNode = atoi(argv[6]);
+
+			vector<vector<pair<int,int> > > topology;
+
+			//read topology
+			utility ut;
+			int numEdge = ut.readTopolgy(fileName,topology); 
+
+			ConstructSuperGraph csg;
+			csg.construct(numSuperNode,topology,numVAttr,numEAttr,attrFolderName);
 
 			break;
 		}default:{

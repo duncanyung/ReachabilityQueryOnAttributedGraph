@@ -42,14 +42,14 @@ void QueryGenerator::generateQuery(vector<query>& queries,int numQuery,const cha
 		for(int j=0; j<numVAttr; j++){
 			int numCon = vertexAttrDomain[j];//rand()%vertexAttrDomain[j] + 1;
 //			int numCon = rand()%vertexAttrDomain[j] + 1;
-			unordered_map<int,bool> existC;
+			unordered_set<int> existC;
 			vector<int> con;
 //			printf("DomainSize=%d\n",numCon);
 //			printf("Constraint of vertex Attr %d: ",j+1);
 			for(int k=0; k<numCon; k++){
 				int c = rand()%vertexAttrDomain[j] + 1;
 				if(existC.find(c)==existC.end()){
-					existC.insert(make_pair(c,true));
+					existC.insert(c);
 					con.push_back(c);
 //					printf("%d ",c);
 				}else
@@ -62,14 +62,14 @@ void QueryGenerator::generateQuery(vector<query>& queries,int numQuery,const cha
 		for(int j=0; j<numEAttr; j++){
 			int numCon = edgeAttrDomain[j];//rand()%edgeAttrDomain[j] + 1;
 //			int numCon = rand()%edgeAttrDomain[j] + 1;
-			unordered_map<int,bool> existC;
+			unordered_set<int> existC;
 			vector<int> con;
 //			printf("DomainSize=%d\n",numCon);
 //			printf("Constraint of edge Attr %d: ",j+1);
 			for(int k=0; k<numCon; k++){
 				int c = rand()%edgeAttrDomain[j] + 1;
 				if(existC.find(c)==existC.end()){
-					existC.insert(make_pair(c,true));
+					existC.insert(c);
 					con.push_back(c);
 //					printf("%d ",c);
 				}else
