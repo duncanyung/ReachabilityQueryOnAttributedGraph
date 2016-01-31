@@ -24,11 +24,13 @@ class utility{
 	public:
 		static const unsigned long long prime = 9223372036854775783;
 		static const unsigned long long constant = 13;
-		static const int soc_pokec_vertex_size = 1632803;
+		static const int soc_pokec_vertex_size = 1632803 + 1;
+		static const int dblp_vertex_size = 42251 + 1;
+		static const int PA_road_network = 1090918 + 1;
 
 		int readTopolgy(const char*,vector<vector<pair<int,int> > >&);
-		int readTopologyFormat1(const char*,vector<vector<pair<int,int> > >&);
-		int scanTopologyFormat1(const char*,vector<vector<pair<int,int> > >&,bool);
+		int readTopologyFormat1(const char*,vector<vector<pair<int,int> > >&,int);
+		int scanTopologyFormat1(const char*,vector<vector<pair<int,int> > >&);
 		void readAttrHash(const char*,vector<unsigned long long>&,bool);
 };
 

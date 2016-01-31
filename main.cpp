@@ -5,6 +5,8 @@
 //#include "QueryHandler.h"
 #include "QueryGenerator.h"
 
+#include <ctime>
+
 void Preprocessing(char const *argv[]){
 	printf("Do Preprocessing\n");
 	/*Pre-processing Functions*/
@@ -20,7 +22,6 @@ void Preprocessing(char const *argv[]){
 			int numEAttr = atoi(argv[5]);
 			int maxDomainSize = atoi(argv[6]);
 			printf("%s %s %d %d %d\n",fileName,attrFolderName,numVAttr,numEAttr,maxDomainSize);
-			//vector<vector<int> > topology2;
 			vector<vector<pair<int,int> > > topology;
 			
 			//read topology
@@ -73,6 +74,8 @@ void Query(char const *argv[]){
 	int vRowSize = atoi(argv[7]);
 	int eRowSize = atoi(argv[8]);
 	int numQuery = atoi(argv[9]);
+	int useConstraint = atoi(argv[10]);
+	int hashOpt = atoi(argv[11]);
 
 
 	//read graph topology into memory
@@ -95,11 +98,36 @@ void Query(char const *argv[]){
 	printf("topology size=%ld  vertexHashValues size=%ld edgeHashValue size=%ld\n",topology.size(),vertexHashValues.size(),edgeHashValues.size());
 	QueryHandler qh;
 	
+//	int notReachableCount = 0;
+
+	clock_t start= clock();
+	double duration;
+
 	for(int i=0; i<queries.size(); i++){
-		bool ans = qh.CReachabilityQuery(topology,vertexHashValues,edgeHashValues,queries[i],attrFolderName,vRowSize,eRowSize);
-		printf("Reachable = %d\n",ans);
+		bool ans = qh.CReachabilityQuery(topology,vertexHashValues,edgeHashValues,queries[i],attrFolderName,vRowSize,eRowSize,useConstraint,hashOpt);
+//			notReachableCount++;
+			printf("Query %d Reachable = %d\n",i,ans);
+			printf("src %d dest %d topology.size()=%d\n",queries[i].src,queries[i].dest,topology.size());
 	}
+	duration = (clock() - start) / (double) CLOCKS_PER_SEC;
+
+	printf("Execution Time per query=%f\n",duration/(double)queries.size());
 	//End Timer HERE!
+
+
+	start= clock();
+//	double duration;
+
+	for(int i=0; i<queries.size(); i++){
+		bool ans = qh.CReachabilityQuery(topology,vertexHashValues,edgeHashValues,queries[i],attrFolderName,vRowSize,eRowSize,useConstraint,0);
+//		notReachableCount++;
+		printf("Query %d Reachable = %d\n",i,ans);
+		printf("src %d dest %d topology.size()=%d\n",queries[i].src,queries[i].dest,topology.size());
+	}
+	duration = (clock() - start) / (double) CLOCKS_PER_SEC;
+
+	
+	printf("Execution Time per query=%f\n",duration/(double)queries.size());
 }
 
 int main(int argc, char const *argv[]){

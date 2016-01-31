@@ -7,7 +7,7 @@
 #			HP-UX
 #CC       = g++
 #CCOPTS   = -c -O
-LINK     = g++
+LINK     = g++ -g -Wl,-stack_size -Wl,1000000 
 #LINKOPTS = -lm -lcryptopp
 
 UTIL = AttrGenerator.o utility.o ComputeHashValue.o QueryHandler.o QueryGenerator.o

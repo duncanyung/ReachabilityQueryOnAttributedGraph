@@ -8,12 +8,16 @@ int utility::readTopolgy(const char* fileName,vector<vector<pair<int,int> > >& t
 
 	string sFileName(fileName);
 	if(sFileName.find("soc-pokec-relationships")!=string::npos)
-		numEdge = readTopologyFormat1(fileName,topology);
+		numEdge = readTopologyFormat1(fileName,topology,soc_pokec_vertex_size);
+	if(sFileName.find("graph_dblp")!=string::npos)
+		numEdge = readTopologyFormat1(fileName,topology,dblp_vertex_size);
+	if(sFileName.find("roadNet-PA")!=string::npos)
+		numEdge = readTopologyFormat1(fileName,topology,PA_road_network);
 
 	return numEdge;
 }
 
-int utility::scanTopologyFormat1(const char* fileName,vector<vector<pair<int,int> > >& topology,bool collectInfo){
+int utility::scanTopologyFormat1(const char* fileName,vector<vector<pair<int,int> > >& topology){
 	string line;
 	char split_char='\t';
 	int maxID=0;
@@ -22,7 +26,9 @@ int utility::scanTopologyFormat1(const char* fileName,vector<vector<pair<int,int
 
 	unordered_map<pair<int,int>,int,pairHash> edgeMap;
 
+//	printf("before open stream\n");
 	ifstream inFile(fileName);
+//	printf("after open stream\n");
 	while(getline(inFile,line)){
 		istringstream s(line);
 		vector<int> tokens;
@@ -35,22 +41,20 @@ int utility::scanTopologyFormat1(const char* fileName,vector<vector<pair<int,int
 		if(lineCount%100000==0)
 			printf("Reading line %d\n",lineCount);
 
-		if(collectInfo==false){
-			int eID = 0;
+		int eID = 0;
 
-			pair<int,int> p = make_pair(min(tokens[0],tokens[1]),max(tokens[0],tokens[1]));
-			unordered_map<pair<int,int>,int,pairHash>::const_iterator got = edgeMap.find(p);
+		pair<int,int> p = make_pair(min(tokens[0],tokens[1]),max(tokens[0],tokens[1]));
+		unordered_map<pair<int,int>,int,pairHash>::const_iterator got = edgeMap.find(p);
 
-			if(got==edgeMap.end()){
-				edgeMap.insert(make_pair(p,edgeIDCount));
-				eID = edgeIDCount;
-				edgeIDCount++;
-			}else{
-				eID = got->second;
-			}
-
-			topology[tokens[0]].push_back(pair<int,int>(tokens[1],eID));
+		if(got==edgeMap.end()){
+			edgeMap.insert(make_pair(p,edgeIDCount));
+			eID = edgeIDCount;
+			edgeIDCount++;
+		}else{
+			eID = got->second;
 		}
+
+		topology[tokens[0]].push_back(pair<int,int>(tokens[1],eID));
 	}
 	inFile.close();
 
@@ -59,12 +63,12 @@ int utility::scanTopologyFormat1(const char* fileName,vector<vector<pair<int,int
 	return edgeIDCount;
 }
 
-int  utility::readTopologyFormat1(const char* fileName,vector<vector<pair<int,int> > >& topology){
+int  utility::readTopologyFormat1(const char* fileName,vector<vector<pair<int,int> > >& topology,int numVertex){
 
 //	scanTopologyFormat1(fileName,topology,true); //collect info only
 	vector<pair<int,int> > adj;
-	topology.assign(soc_pokec_vertex_size,adj);
-	return scanTopologyFormat1(fileName,topology,false); //put tings into topology
+	topology.assign(numVertex,adj);
+	return scanTopologyFormat1(fileName,topology); //put tings into topology
 
 }
 

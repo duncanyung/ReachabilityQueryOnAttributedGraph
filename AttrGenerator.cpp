@@ -48,11 +48,11 @@ void AttrGenerator::_generateAttribute(const char* attrFolderName,vector<vector<
 	else
 		numRow = topology.size();
 
-	for(int i=1;i<=numRow;i++){
+	for(int i=0;i<=numRow;i++){
 		string attr=to_string(i);
 		attr.append(",");
 		for(int j=0; j<numAttr; j++){
-			int temp=rand()%attrDomainSize[j];
+			int temp=rand()%attrDomainSize[j]+1;
 			attr.append(to_string(temp));
 			if(j==numAttr-1)
 				attr.append(",,");
