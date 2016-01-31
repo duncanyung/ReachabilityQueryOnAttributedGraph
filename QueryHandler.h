@@ -22,7 +22,7 @@ class QueryHandler{
 	public:
 		bool SimpleBFS(query&,vector<vector<pair<int,int> > >&);
 		bool DFS(int,vector<vector<pair<int,int> > >&,query&,vector<bool>&);
-		bool CReachabilityQuery(vector<vector<pair<int,int> > >&,vector<unsigned long long>&,vector<unsigned long long>&,query&,const char*,int,int,bool,bool);
+		pair<bool,int> CReachabilityQuery(vector<vector<pair<int,int> > >&,vector<unsigned long long>&,vector<unsigned long long>&,query&,const char*,int,int,bool,bool);
 		bool BFS_C(int,vector<vector<pair<int,int> > >&,vector<unsigned long long>&,vector<unsigned long long>&,query&,queue<pair<int,int> >&,
 					vector<bool>&,unordered_map<unsigned long long,bool>&,unordered_map<unsigned long long,bool>&,const char*,const char*,
 					ifstream&,ifstream&,int,int,bool,bool);

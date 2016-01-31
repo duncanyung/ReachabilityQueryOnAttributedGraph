@@ -1,10 +1,13 @@
 #include "QueryHandler.h"
 
 
+int IOCount = 0;
 
-bool QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >& topology,vector<unsigned long long>& vertexHashValues,
+pair<bool,int> QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >& topology,vector<unsigned long long>& vertexHashValues,
 											vector<unsigned long long>& edgeHashValues,query& q,const char* attrFolderName,
 											int vRowSize,int eRowSize,bool useConstraint,bool hashOpt){
+
+	IOCount = 0;
 
 	queue<pair<int,int> > qu;
 	vector<bool> visited;
@@ -32,14 +35,14 @@ bool QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >& topology,
 //		printf("src %d dest %d topology.size()=%d\n",q.src,q.dest,topology.size());
 
 		if(result == true)
-			return true;
+			return make_pair(true,IOCount);
 //		qu.push(make_pair());
 	}
 
 	infV.close();
 	infE.close();
 
-	return false;
+	return make_pair(false,IOCount);
 }
 
 bool QueryHandler::BFS_C(int cur,vector<vector<pair<int,int> > >& topology,vector<unsigned long long>& vertexHashValues,
@@ -124,6 +127,7 @@ void QueryHandler::IOAttr(int id,const char* attrFileName,vector<int>& attr,ifst
 	inf.seekg(addr);
 	getline(inf,strData);
 
+	IOCount++;
 //	printf("Row=%d Attr= %s\n",id,strData.c_str());
 	split(strData,',',attr,true);
 

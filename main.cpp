@@ -102,17 +102,18 @@ void Query(char const *argv[]){
 
 	clock_t start= clock();
 	double duration;
+	pair<bool,int> ans;
 
 	for(int i=0; i<queries.size(); i++){
-		bool ans = qh.CReachabilityQuery(topology,vertexHashValues,edgeHashValues,queries[i],attrFolderName,vRowSize,eRowSize,useConstraint,hashOpt);
-		if(ans==false)
+		ans = qh.CReachabilityQuery(topology,vertexHashValues,edgeHashValues,queries[i],attrFolderName,vRowSize,eRowSize,useConstraint,hashOpt);
+		if(ans.first==false)
 			notReachableCount++;
-		printf("Query %d Reachable = %d\n",i,ans);
+		printf("Query %d Reachable = %d\n",i,ans.first);
 		printf("src %d dest %d topology.size()=%ld\n",queries[i].src,queries[i].dest,topology.size());
 	}
 	duration = (clock() - start) / (double) CLOCKS_PER_SEC;
 
-	printf("Execution Time per query=%f\n",duration/(double)queries.size());
+	printf("Execution Time per query=%f ,IOCount=%d\n",duration/(double)queries.size(),ans.second);
 	printf("Num of Not Reachable=%d\n",notReachableCount);
 	//End Timer HERE!
 
@@ -121,16 +122,15 @@ void Query(char const *argv[]){
 	start= clock();
 
 	for(int i=0; i<queries.size(); i++){
-		bool ans = qh.CReachabilityQuery(topology,vertexHashValues,edgeHashValues,queries[i],attrFolderName,vRowSize,eRowSize,useConstraint,0);
-		if(ans==false)
+		ans = qh.CReachabilityQuery(topology,vertexHashValues,edgeHashValues,queries[i],attrFolderName,vRowSize,eRowSize,useConstraint,0);
+		if(ans.first==false)
 			notReachableCount++;
-		printf("Query %d Reachable = %d\n",i,ans);
+		printf("Query %d Reachable = %d\n",i,ans.first);
 		printf("src %d dest %d topology.size()=%ld\n",queries[i].src,queries[i].dest,topology.size());
 	}
 	duration = (clock() - start) / (double) CLOCKS_PER_SEC;
-
 	
-	printf("Execution Time per query=%f\n",duration/(double)queries.size());
+	printf("Execution Time per query=%f ,IOCount=%d\n",duration/(double)queries.size(),ans.second);
 	printf("Num of Not Reachable=%d\n",notReachableCount);
 }
 
