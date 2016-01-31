@@ -29,7 +29,7 @@ void QueryGenerator::generateQuery(vector<query>& queries,int numQuery,const cha
 	int numVAttr = 0,numEAttr = 0;
 
 	numVAttr = getAttributeInfo(vertexAttrInfoFileName,vertexAttrDomain);
-	numEAttr = getAttributeInfo(vertexAttrInfoFileName,edgeAttrDomain);
+	numEAttr = getAttributeInfo(edgeAttrInfoFileName,edgeAttrDomain);
 
 	srand(time(NULL));
 	for(int i=0; i<numQuery; i++){
@@ -41,6 +41,7 @@ void QueryGenerator::generateQuery(vector<query>& queries,int numQuery,const cha
 
 		for(int j=0; j<numVAttr; j++){
 			int numCon = vertexAttrDomain[j];//rand()%vertexAttrDomain[j] + 1;
+//			int numCon = rand()%vertexAttrDomain[j] + 1;
 			unordered_map<int,bool> existC;
 			vector<int> con;
 //			printf("DomainSize=%d\n",numCon);
@@ -60,6 +61,7 @@ void QueryGenerator::generateQuery(vector<query>& queries,int numQuery,const cha
 
 		for(int j=0; j<numEAttr; j++){
 			int numCon = edgeAttrDomain[j];//rand()%edgeAttrDomain[j] + 1;
+//			int numCon = rand()%edgeAttrDomain[j] + 1;
 			unordered_map<int,bool> existC;
 			vector<int> con;
 //			printf("DomainSize=%d\n",numCon);

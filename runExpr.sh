@@ -19,10 +19,10 @@ echo start_Run_Expr_Script
 
 	numEAttr=5
 	numVAttr=5
-	maxDomainSize=5
-	vRowSize=39
-	eRowSize=39
-	numQuery=100
+	maxDomainSize=20
+	vRowSize=24
+	eRowSize=24
+	numQuery=1
 	useConstraint=1
 	hashOpt=1
 	#generate Attribute

@@ -53,6 +53,7 @@ void AttrGenerator::_generateAttribute(const char* attrFolderName,vector<vector<
 		attr.append(",");
 		for(int j=0; j<numAttr; j++){
 			int temp=rand()%attrDomainSize[j]+1;
+//			printf("temp=%d\n",temp);
 			attr.append(to_string(temp));
 			if(j==numAttr-1)
 				attr.append(",,");
