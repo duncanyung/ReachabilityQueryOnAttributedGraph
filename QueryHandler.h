@@ -13,15 +13,32 @@
 #include <string.h>
 #include <unistd.h>
 #include <unordered_set>
+#include <tuple>
 
 #include "query.h"
+#include "triple.h"
 
 using namespace std;
 
 class QueryHandler{
 
+	class mycomparison{
+	  	bool reverse;
+		public:
+			mycomparison(const bool& revparam=false)
+	 		{reverse=revparam;}
+	  	
+	  		bool operator() (const triple& lhs, const triple&rhs) const{
+			    if (reverse) 
+			    	return (lhs.dist>rhs.dist);
+		    	else 
+		    		return (lhs.dist<rhs.dist);
+	  	}
+	};
+
 	public:
-		void SuperGraphShortestPath(vector<vector<pair<int,int> > >&,unordered_set<int>&,int);
+		void PathRecovery(vector<int>&,unordered_set<int>&,int,int);
+		void SuperGraphShortestPath(int,int,vector<vector<pair<int,int> > >&,vector<double>&,vector<double>&,unordered_set<int>&,int);
 		bool SimpleBFS(query&,vector<vector<pair<int,int> > >&);
 		bool DFS(int,vector<vector<pair<int,int> > >&,query&,vector<bool>&);
 		pair<bool,int> CReachabilityQuery(vector<vector<pair<int,int> > >&,vector<unsigned long long>&,vector<unsigned long long>&,query&,const char*,int,int,bool,bool);

@@ -20,7 +20,7 @@ using namespace std;
 class ConstructSuperGraph{
 
 	public:
-		void construct(int,vector<vector<pair<int,int> > >&,int,int,const char*);
+		void construct(int,int,int,int,const char*);
 };
 
 

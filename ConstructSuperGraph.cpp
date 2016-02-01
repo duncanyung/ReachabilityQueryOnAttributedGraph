@@ -3,7 +3,7 @@
 
 
 
-void ConstructSuperGraph::construct(int numSuperNode,vector<vector<pair<int,int> > >& topology,int numVAttr,int numEAttr,const char* atrFolderName){
+void ConstructSuperGraph::construct(int numSuperNode,int numVertex,int numVAttr,int numEAttr,const char* attrFolderName){
 
 
 	//1. GraphClustering
@@ -11,7 +11,8 @@ void ConstructSuperGraph::construct(int numSuperNode,vector<vector<pair<int,int>
 
 	//2. build synopsis for super node
 
+
 	//3. build synopsis for super edge
-	
+
 
 }

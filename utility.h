@@ -21,6 +21,8 @@ class utility{
 	    	}
 	};
 
+	
+
 	public:
 		static const unsigned long long prime = 9223372036854775783;
 		static const unsigned long long constant = 101; 

@@ -1,6 +1,5 @@
 #include "QueryHandler.h"
 
-
 int IOCount = 0;
 
 pair<bool,int> QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >& topology,vector<unsigned long long>& vertexHashValues,
@@ -51,12 +50,58 @@ pair<bool,int> QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >&
 	return make_pair(false,IOCount);
 }
 
-void QueryHandler::SuperGraphShortestPath(vector<vector<pair<int,int> > >& topology,unordered_set<int>& SSP,int SuperEIgnore){
+void QueryHandler::PathRecovery(vector<int>& parents,unordered_set<int>& SSP,int src,int dest){
 
+	int cur = dest;
+	SSP.insert(cur);
+	while(cur != src){
+		SSP.insert(parents[cur]);
+		cur = parents[cur];
+	}
+}
 
-//	while(){
+void QueryHandler::SuperGraphShortestPath(int src,int dest,vector<vector<pair<int,int> > >& stopology,vector<double>& vSynopsis,vector<double>& eSynopsis,
+											unordered_set<int>& SSP,int SuperEIgnore){
+	vector<int> parents;
+	parents.assign(stopology.size(),-1);
 
-//	}
+	vector<bool> visited;
+	visited.assign(stopology.size(),false);
+
+//	queue<triple> qu;//use pirority queue!!!
+
+	typedef	priority_queue<triple,vector<triple>,mycomparison> myPriorityQueue;
+	myPriorityQueue qu;//use pirority queue!!!
+
+	triple p; p.v=src; p.dist=1; p.parent=-1;
+	qu.push(p);
+	while(!qu.empty()){
+		triple cur = qu.top();
+		qu.pop();
+
+		if(visited[cur.v] == true)
+			continue;
+		parents[cur.v] = cur.parent;
+		visited[cur.v] = true;
+
+		if(cur.v == dest)
+			break;
+
+		for(int i=0; i<stopology[cur.v].size(); i++){
+			int adjVertex = stopology[cur.v][i].first;
+			int e = stopology[cur.v][i].second;
+			if(visited[adjVertex] == false && e!=SuperEIgnore){
+				triple adj;
+				adj.v = adjVertex;
+				adj.dist = cur.dist*eSynopsis[e]*vSynopsis[adjVertex];
+				adj.parent = cur.v;
+				qu.push(adj);
+			}
+		}
+	}
+
+	PathRecovery(parents,SSP,src,dest);
+
 }
 
 

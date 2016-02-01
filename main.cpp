@@ -62,15 +62,10 @@ void Preprocessing(char const *argv[]){
 			int numVAttr = atoi(argv[4]);
 			int numEAttr = atoi(argv[5]);
 			int numSuperNode = atoi(argv[6]);
-
-			vector<vector<pair<int,int> > > topology;
-
-			//read topology
-			utility ut;
-			int numEdge = ut.readTopolgy(fileName,topology); 
+			int numVertex = atoi(argv[7]);
 
 			ConstructSuperGraph csg;
-			csg.construct(numSuperNode,topology,numVAttr,numEAttr,attrFolderName);
+			csg.construct(numSuperNode,numVertex,numVAttr,numEAttr,attrFolderName);
 
 			break;
 		}default:{
