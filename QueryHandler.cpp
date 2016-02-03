@@ -4,7 +4,9 @@ int IOCount = 0;
 
 pair<bool,int> QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >& topology,vector<unsigned long long>& vertexHashValues,
 											vector<unsigned long long>& edgeHashValues,query& q,const char* attrFolderName,
-											int vRowSize,int eRowSize,bool useConstraint,bool hashOpt){
+											int vRowSize,int eRowSize,bool useConstraint,bool hashOpt,
+											vector<vector<pair<int,int> > >& stopology,vector<double>& vSynopsis,vector<double>& eSynopsis,
+											vector<int>& S,const char* vSynopsisFileName,const char* eSynopsisFileName,int syRowSize){
 
 	IOCount = 0;
 
@@ -32,7 +34,7 @@ pair<bool,int> QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >&
 ///////////////////////Under Construction////////////////////////////////
 		unordered_set<int> SSP;
 		int SuperEIgnore = h.second;
-//		SuperGraphShortestPath(topology,SSP,SuperEIgnore);
+//		SuperGraphShortestPath(q,S[h.first],S[q.dest],stopology,vSynopsis,eSynopsis,SSP,SuperEIgnore,vSynopsisFileName,eSynopsisFileName,syRowSize);
 /////////////////////////////////////////////////////////////////////////
 
 		bool result = BFS_C(h.first,topology,vertexHashValues,edgeHashValues,q,qu,visited,satTableE,satTableV,
@@ -50,28 +52,35 @@ pair<bool,int> QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >&
 	return make_pair(false,IOCount);
 }
 
-void QueryHandler::PathRecovery(vector<int>& parents,unordered_set<int>& SSP,int src,int dest){
+void QueryHandler::computeSynopsis(query& q,vector<double>& vSynopsis,int adjVertex,const char* vSynopsisFileName,int rowSize){
+	//use fseek here!
+	ifstream inf(vSynopsisFileName);
 
-	int cur = dest;
-	SSP.insert(cur);
-	while(cur != src){
-		SSP.insert(parents[cur]);
-		cur = parents[cur];
-	}
+	//get the id^th row in attrFileName
+	string strData;
+	int addr = adjVertex*rowSize;
+	inf.seekg(addr);
+	getline(inf,strData);
+
+	IOCount++;
+//	printf("Row=%d Attr= %s\n",id,strData.c_str());
+	vector<int> samples;
+	split(strData,',',samples,true);
+
+	inf.close();
 }
 
-void QueryHandler::SuperGraphShortestPath(int src,int dest,vector<vector<pair<int,int> > >& stopology,vector<double>& vSynopsis,vector<double>& eSynopsis,
-											unordered_set<int>& SSP,int SuperEIgnore){
+void QueryHandler::SuperGraphShortestPath(query& q,int src,int dest,vector<vector<pair<int,int> > >& stopology,vector<double>& vSynopsis,vector<double>& eSynopsis,
+											unordered_set<int>& SSP,int SuperEIgnore,const char* vSynopsisFileName,const char* eSynopsisFileName,
+											int syRowSize){
 	vector<int> parents;
 	parents.assign(stopology.size(),-1);
 
 	vector<bool> visited;
 	visited.assign(stopology.size(),false);
 
-//	queue<triple> qu;//use pirority queue!!!
-
 	typedef	priority_queue<triple,vector<triple>,mycomparison> myPriorityQueue;
-	myPriorityQueue qu;//use pirority queue!!!
+	myPriorityQueue qu;
 
 	triple p; p.v=src; p.dist=1; p.parent=-1;
 	qu.push(p);
@@ -93,7 +102,10 @@ void QueryHandler::SuperGraphShortestPath(int src,int dest,vector<vector<pair<in
 			if(visited[adjVertex] == false && e!=SuperEIgnore){
 				triple adj;
 				adj.v = adjVertex;
-				adj.dist = cur.dist*eSynopsis[e]*vSynopsis[adjVertex];
+//				adj.dist = cur.dist*eSynopsis[e]*vSynopsis[adjVertex];
+				if(vSynopsis[adjVertex]==-1)
+					computeSynopsis(q,vSynopsis,adjVertex,vSynopsisFileName,syRowSize);
+				adj.dist = cur.dist*vSynopsis[adjVertex];
 				adj.parent = cur.v;
 				qu.push(adj);
 			}
@@ -104,6 +116,15 @@ void QueryHandler::SuperGraphShortestPath(int src,int dest,vector<vector<pair<in
 
 }
 
+void QueryHandler::PathRecovery(vector<int>& parents,unordered_set<int>& SSP,int src,int dest){
+
+	int cur = dest;
+	SSP.insert(cur);
+	while(cur != src){
+		SSP.insert(parents[cur]);
+		cur = parents[cur];
+	}
+}
 
 bool QueryHandler::BFS_C(int cur,vector<vector<pair<int,int> > >& topology,vector<unsigned long long>& vertexHashValues,
 						vector<unsigned long long>& edgeHashValues,query& q,queue<pair<int,int> >& quGlobal,vector<bool>& visited,
@@ -137,8 +158,8 @@ bool QueryHandler::BFS_C(int cur,vector<vector<pair<int,int> > >& topology,vecto
 
 			////////////////////////Under Construction//////////////////////////////
 			//if the vertex is in the super path, do below
-			//if(withinSSP(SP,S[adjVertex])
-				//SP is a unordered_Map that store the super node in spuer path
+			//if(isWithinSSP(SP,S[adjVertex])
+				//SP is a unordered_set that store the super node in spuer path
 				//S is a vector that store which super node this adjVertex belong to
 				qu.push(make_pair(adjVertex,-1));
 			//else

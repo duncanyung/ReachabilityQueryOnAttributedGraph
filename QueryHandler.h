@@ -38,10 +38,15 @@ class QueryHandler{
 
 	public:
 		void PathRecovery(vector<int>&,unordered_set<int>&,int,int);
-		void SuperGraphShortestPath(int,int,vector<vector<pair<int,int> > >&,vector<double>&,vector<double>&,unordered_set<int>&,int);
+		void computeSynopsis(query&,vector<double>&,int,const char*,int);
+		void SuperGraphShortestPath(query&,int,int,vector<vector<pair<int,int> > >&,vector<double>&,vector<double>&,unordered_set<int>&,int,
+									const char*,const char*,int);
 		bool SimpleBFS(query&,vector<vector<pair<int,int> > >&);
 		bool DFS(int,vector<vector<pair<int,int> > >&,query&,vector<bool>&);
-		pair<bool,int> CReachabilityQuery(vector<vector<pair<int,int> > >&,vector<unsigned long long>&,vector<unsigned long long>&,query&,const char*,int,int,bool,bool);
+		pair<bool,int> CReachabilityQuery(vector<vector<pair<int,int> > >&,vector<unsigned long long>&,vector<unsigned long long>&,query&,
+											const char*,int,int,bool,bool,
+											vector<vector<pair<int,int> > >&,vector<double>&,vector<double>&,vector<int>&,
+											const char* ,const char*,int);
 		bool BFS_C(int,vector<vector<pair<int,int> > >&,vector<unsigned long long>&,vector<unsigned long long>&,query&,queue<pair<int,int> >&,
 					vector<bool>&,unordered_map<unsigned long long,bool>&,unordered_map<unsigned long long,bool>&,const char*,const char*,
 					ifstream&,ifstream&,int,int,bool,bool);

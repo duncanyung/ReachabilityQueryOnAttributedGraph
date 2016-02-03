@@ -1,7 +1,7 @@
 #include "utility.h"
 
 
-int utility::readTopolgy(const char* fileName,vector<vector<pair<int,int> > >& topology){
+int utility::readTopology(const char* fileName,vector<vector<pair<int,int> > >& topology){
 	printf("Read Topology\n");
 
 	int numEdge = 0;

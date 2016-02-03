@@ -10,7 +10,7 @@
 LINK     = g++ -g -Wl,-stack_size -Wl,1000000 
 #LINKOPTS = -lm -lcryptopp
 
-UTIL = AttrGenerator.o utility.o ComputeHashValue.o QueryHandler.o QueryGenerator.o
+UTIL = AttrGenerator.o utility.o ComputeHashValue.o QueryHandler.o QueryGenerator.o ConstructSuperGraph.o
 #pairHash.o
 #UTIL  = utility.o func.o dataobj.o blk_file.o MRtree.o
 #UTIL  = utility.o AttrGenerator.o
@@ -35,6 +35,8 @@ UTIL = AttrGenerator.o utility.o ComputeHashValue.o QueryHandler.o QueryGenerato
 #qmain.o: qmain.cc
 
 #pairHash.o: pairHash.h
+
+ConstructSuperGraph.o: ConstructSuperGraph.cpp ConstructSuperGraph.h
 
 QueryGenerator.o: QueryGenerator.cpp QueryGenerator.h
 

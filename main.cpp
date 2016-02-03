@@ -23,11 +23,12 @@ void Preprocessing(char const *argv[]){
 			int numEAttr = atoi(argv[5]);
 			int maxDomainSize = atoi(argv[6]);
 			printf("%s %s %d %d %d\n",fileName,attrFolderName,numVAttr,numEAttr,maxDomainSize);
-			vector<vector<pair<int,int> > > topology;
+			
 			
 			//read topology
 			utility ut;
-			int numEdge = ut.readTopolgy(fileName,topology);
+			vector<vector<pair<int,int> > > topology;
+			int numEdge = ut.readTopology(fileName,topology);
 
 			//generate attribute on the topology
 			AttrGenerator genAttr;
@@ -62,10 +63,28 @@ void Preprocessing(char const *argv[]){
 			int numVAttr = atoi(argv[4]);
 			int numEAttr = atoi(argv[5]);
 			int numSuperNode = atoi(argv[6]);
-			int numVertex = atoi(argv[7]);
+			int synopsisSize = atoi(argv[7]);
+			const char* sFileName = argv[8];
+			const char* vSynopsisFileName = argv[9];
+			const char* eSynopsisFileName = argv[10];
+			const char* vToSNMapFileName = argv[11];
+
+			printf("fileName=%s\n",fileName);
+			printf("attrFolderName=%s\n",attrFolderName);
+			printf("%d,%d,%d,%d\n",numVAttr,numEAttr,numSuperNode,synopsisSize);
+			printf("sFileName=%s\n",sFileName);
+			printf("vSynopsisFileName=%s\n",vSynopsisFileName);
+
+
+			//read topology
+			utility ut;
+			vector<vector<pair<int,int> > > topology;
+			int numEdge = ut.readTopology(fileName,topology);
+			int numVertex = topology.size();
 
 			ConstructSuperGraph csg;
-			csg.construct(numSuperNode,numVertex,numVAttr,numEAttr,attrFolderName);
+			csg.construct(numSuperNode,numVertex,numVAttr,numEAttr,attrFolderName,sFileName,vSynopsisFileName,eSynopsisFileName,
+							vToSNMapFileName,topology,synopsisSize);
 
 			break;
 		}default:{
@@ -87,12 +106,24 @@ void Query(char const *argv[]){
 	int numQuery = atoi(argv[9]);
 	int useConstraint = atoi(argv[10]);
 	int hashOpt = atoi(argv[11]);
-
+	int sySize = atoi(argv[12]);
+	int syRowSize = sySize*
+	const char* sFileName = argv[13];
+	const char* vSynopsisFileName = argv[14];
+	const char* eSynopsisFileName = argv[15];
 
 	//read graph topology into memory
 	utility ut;
-	vector<vector<pair<int,int> > > topology;
-	int numEdge = ut.readTopolgy(fileName,topology);
+	vector<vector<pair<int,int> > > topology,stopology;
+	int numEdge = ut.readTopology(fileName,topology);
+//	int numEdge = ut.readSuperGraphTopoloy(sFileName,stopology);
+
+	vector<double> vSynopsis,eSynopsis;
+//	ut.readSynopsis(vSynopsisFileName,vSynopsis);
+//	ut.readSynopsis(eSynopsisFileName,eSynopsis);
+
+	vector<int> S;
+//	ut.readVertexToSuperNodeMapping(superNodeMappingFileName,S);
 
 	//read hash values into memory
 	vector<unsigned long long> vertexHashValues,edgeHashValues;
@@ -111,12 +142,13 @@ void Query(char const *argv[]){
 	
 	int notReachableCount = 0;
 
-	clock_t start= clock();
+	clock_t start = clock();
 	double duration;
 	pair<bool,int> ans;
 
 	for(int i=0; i<queries.size(); i++){
-		ans = qh.CReachabilityQuery(topology,vertexHashValues,edgeHashValues,queries[i],attrFolderName,vRowSize,eRowSize,useConstraint,hashOpt);
+		ans = qh.CReachabilityQuery(topology,vertexHashValues,edgeHashValues,queries[i],attrFolderName,vRowSize,eRowSize,useConstraint,hashOpt,
+									stopology,vSynopsis,eSynopsis,S,vSynopsisFileName,eSynopsisFileName,syRowSize);//S is the vertex to supernode mapping vector
 		if(ans.first==false)
 			notReachableCount++;
 		printf("Query %d Reachable = %d\n",i,ans.first);
@@ -133,7 +165,8 @@ void Query(char const *argv[]){
 	start= clock();
 
 	for(int i=0; i<queries.size(); i++){
-		ans = qh.CReachabilityQuery(topology,vertexHashValues,edgeHashValues,queries[i],attrFolderName,vRowSize,eRowSize,useConstraint,0);
+//		ans = qh.CReachabilityQuery(topology,vertexHashValues,edgeHashValues,queries[i],attrFolderName,vRowSize,eRowSize,useConstraint,0,
+//									stopology,vSynopsis,eSynopsis);
 		if(ans.first==false)
 			notReachableCount++;
 		printf("Query %d Reachable = %d\n",i,ans.first);
