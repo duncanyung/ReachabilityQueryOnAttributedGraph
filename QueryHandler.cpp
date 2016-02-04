@@ -6,7 +6,8 @@ pair<bool,int> QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >&
 											vector<unsigned long long>& edgeHashValues,query& q,const char* attrFolderName,
 											int vRowSize,int eRowSize,bool useConstraint,bool hashOpt,
 											vector<vector<pair<int,int> > >& stopology,vector<double>& vSynopsis,vector<double>& eSynopsis,
-											vector<int>& S,const char* vSynopsisFileName,const char* eSynopsisFileName,int syRowSize){
+											vector<int>& S,const char* vSynopsisFileName,const char* eSynopsisFileName,int syRowSize,
+											bool heuristic){
 
 	IOCount = 0;
 
@@ -34,11 +35,12 @@ pair<bool,int> QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >&
 ///////////////////////Under Construction////////////////////////////////
 		unordered_set<int> SSP;
 		int SuperEIgnore = h.second;
-//		SuperGraphShortestPath(q,S[h.first],S[q.dest],stopology,vSynopsis,eSynopsis,SSP,SuperEIgnore,vSynopsisFileName,eSynopsisFileName,syRowSize);
+		if(heuristic == true)
+			SuperGraphShortestPath(q,S[h.first],S[q.dest],stopology,vSynopsis,eSynopsis,SSP,SuperEIgnore,vSynopsisFileName,eSynopsisFileName,syRowSize);
 /////////////////////////////////////////////////////////////////////////
 
 		bool result = BFS_C(h.first,topology,vertexHashValues,edgeHashValues,q,qu,visited,satTableE,satTableV,
-							vertexAttrFileName,edgeAttrFileName,infV,infE,vRowSize,eRowSize,useConstraint,hashOpt);
+							vertexAttrFileName,edgeAttrFileName,infV,infE,vRowSize,eRowSize,useConstraint,hashOpt,SSP,S,heuristic);
 
 //		printf("src %d dest %d topology.size()=%d\n",q.src,q.dest,topology.size());
 
@@ -70,9 +72,9 @@ void QueryHandler::computeSynopsis(query& q,vector<double>& vSynopsis,int adjVer
 	inf.close();
 }
 
-void QueryHandler::SuperGraphShortestPath(query& q,int src,int dest,vector<vector<pair<int,int> > >& stopology,vector<double>& vSynopsis,vector<double>& eSynopsis,
-											unordered_set<int>& SSP,int SuperEIgnore,const char* vSynopsisFileName,const char* eSynopsisFileName,
-											int syRowSize){
+void QueryHandler::SuperGraphShortestPath(query& q,int src,int dest,vector<vector<pair<int,int> > >& stopology,vector<double>& vSynopsis,
+											vector<double>& eSynopsis,unordered_set<int>& SSP,int SuperEIgnore,const char* vSynopsisFileName,
+											const char* eSynopsisFileName,int syRowSize){
 	vector<int> parents;
 	parents.assign(stopology.size(),-1);
 
@@ -113,7 +115,6 @@ void QueryHandler::SuperGraphShortestPath(query& q,int src,int dest,vector<vecto
 	}
 
 	PathRecovery(parents,SSP,src,dest);
-
 }
 
 void QueryHandler::PathRecovery(vector<int>& parents,unordered_set<int>& SSP,int src,int dest){
@@ -130,7 +131,7 @@ bool QueryHandler::BFS_C(int cur,vector<vector<pair<int,int> > >& topology,vecto
 						vector<unsigned long long>& edgeHashValues,query& q,queue<pair<int,int> >& quGlobal,vector<bool>& visited,
 						unordered_map<unsigned long long,bool>& satTableE,unordered_map<unsigned long long,bool>& satTableV,
 						const char* vertexAttrFileName,const char* edgeAttrFileName,ifstream& infV,ifstream& infE,int vRowSize,
-						int eRowSize,bool useConstraint,bool hashOpt){
+						int eRowSize,bool useConstraint,bool hashOpt,unordered_set<int>& SP,vector<int>& S,bool heuristic){
 
 	queue<pair<int,int> > qu;
 	qu.push(make_pair(cur,-1));
@@ -158,17 +159,25 @@ bool QueryHandler::BFS_C(int cur,vector<vector<pair<int,int> > >& topology,vecto
 
 			////////////////////////Under Construction//////////////////////////////
 			//if the vertex is in the super path, do below
-			//if(isWithinSSP(SP,S[adjVertex])
+			if(!heuristic || isWithinSSP(SP,S[adjVertex])){
 				//SP is a unordered_set that store the super node in spuer path
 				//S is a vector that store which super node this adjVertex belong to
 				qu.push(make_pair(adjVertex,-1));
-			//else
+			}else{
 				//put this vertex in the quGlobal
-				//quGlobal.push(make_pair(adjVertex,...));
+				quGlobal.push(make_pair(adjVertex,-1));
+			}
 			////////////////////////////////////////////////////////////////////////
 		}
 	}
 	return false;
+}
+
+bool QueryHandler::isWithinSSP(unordered_set<int>& SP,int node){
+	if(SP.find(node)==SP.end())
+		return false;
+	else
+		return true;
 }
 
 bool QueryHandler::CheckConstraint(int id, vector<unsigned long long>& hashValues,vector<vector<int> >& con,

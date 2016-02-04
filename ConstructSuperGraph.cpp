@@ -1,4 +1,5 @@
-#include  "ConstructSuperGraph.h"
+#include "ConstructSuperGraph.h"
+#include "utility.h"
 
 
 
@@ -13,6 +14,14 @@ void ConstructSuperGraph::construct(int numSuperNode,int numVertex,int numVAttr,
 	//1. GraphClustering
 		//partition vertices into k clusters based on vertex and edge attribute similarity
 	clustering(attrFolderName,S,topology,numSuperNode);//has to be O(n+m) or O((n+m)log(n+m)) I/O
+
+	FILE* outFile = fopen(vToSNMapFileName,"w");
+
+	for(int i=0; i<S.size(); i++)
+		fprintf(outFile,"%d\t%d\n",i,S[i]);
+
+	fclose(outFile);
+
 
 	//2. build and save super graph
 		//assign edge into super Edge
@@ -43,12 +52,27 @@ void ConstructSuperGraph::buildSynopsis(const char* synopsisFileName,vector<int>
 	FILE* outFile = fopen(synopsisFileName,"w");
 
 	for(int i=0; i<numSuperNode; i++){
-		fprintf(outFile,"%d,",i+1);
+		string row="";
+		int numDigit = 0;
+		numDigit = numDigit + utility::countIntDigit(i+1);
+
+//		fprintf(outFile,"%d,",i+1);
+		row.append(to_string(i+1));
+		row.append(",");
 		for(int j=0; j<synopsisSize; j++){
 			int s = rand()%superNodes[i].size();
-			fprintf(outFile,"%d,",superNodes[i][s]);
+			numDigit = numDigit + utility::countIntDigit(s);
+// 			fprintf(outFile,"%d,",superNodes[i][s]);
+			row.append(to_string(superNodes[i][s]));
+			row.append(",");
 		}
-		fprintf(outFile,",\n");
+		row.append(",");
+		int extraSpace = synopsisSize*(10+1+1)+1 - numDigit;//assume maximum 10 digits per sample id
+		for(int j=0; j<extraSpace; j++)
+			row.append(" ");
+		row.append("\n");
+
+		fprintf(outFile,"%s\n",row.c_str());
 	}
 
 	fclose(outFile);

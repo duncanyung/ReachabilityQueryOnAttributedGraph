@@ -46,10 +46,16 @@ class QueryHandler{
 		pair<bool,int> CReachabilityQuery(vector<vector<pair<int,int> > >&,vector<unsigned long long>&,vector<unsigned long long>&,query&,
 											const char*,int,int,bool,bool,
 											vector<vector<pair<int,int> > >&,vector<double>&,vector<double>&,vector<int>&,
-											const char* ,const char*,int);
-		bool BFS_C(int,vector<vector<pair<int,int> > >&,vector<unsigned long long>&,vector<unsigned long long>&,query&,queue<pair<int,int> >&,
-					vector<bool>&,unordered_map<unsigned long long,bool>&,unordered_map<unsigned long long,bool>&,const char*,const char*,
-					ifstream&,ifstream&,int,int,bool,bool);
+											const char* ,const char*,int,bool);
+//		bool BFS_C(int,vector<vector<pair<int,int> > >&,vector<unsigned long long>&,vector<unsigned long long>&,query&,queue<pair<int,int> >&,
+//					vector<bool>&,unordered_map<unsigned long long,bool>&,unordered_map<unsigned long long,bool>&,const char*,const char*,
+//					ifstream&,ifstream&,int,int,bool,bool,unordered_set<int>,vector<int>&);
+		bool BFS_C(int,vector<vector<pair<int,int> > >&,vector<unsigned long long>&,
+						vector<unsigned long long>&,query&,queue<pair<int,int> >&,vector<bool>&,
+						unordered_map<unsigned long long,bool>&,unordered_map<unsigned long long,bool>&,
+						const char*,const char*,ifstream&,ifstream&,int,
+						int,bool,bool,unordered_set<int>&,vector<int>&,bool);
+
 		bool DFS_C(int,vector<vector<pair<int,int> > >&,vector<unsigned long long>&,vector<unsigned long long>&,query&,queue<pair<int,int> >&,
 					vector<bool>&,unordered_map<unsigned long long,bool>&,unordered_map<unsigned long long,bool>&,const char*,const char*,
 					/*ifstream&,ifstream&,*/int,int,bool);
@@ -57,6 +63,7 @@ class QueryHandler{
 		void split(const string&,char,vector<int>&,bool);
 		void IOAttr(int,const char*,vector<int>&,ifstream&,int);
 		bool CheckAttr(vector<int>&,vector<vector<int> >&);
+		bool isWithinSSP(unordered_set<int>&,int);
 };
 
 

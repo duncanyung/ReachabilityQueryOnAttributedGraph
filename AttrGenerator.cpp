@@ -1,6 +1,7 @@
 #include "AttrGenerator.h"
+#include "utility.h"
 
-
+/*
 int AttrGenerator::countIntDigit(int x){
 	int length = 1;
 	while ( x /= 10 )
@@ -8,7 +9,7 @@ int AttrGenerator::countIntDigit(int x){
 
 	return length;
 }
-
+*/
 void AttrGenerator::_generateAttribute(const char* attrFolderName,vector<vector<pair<int,int> > >& topology,int numAttr,int maxDomainSize,bool isEdge,int numEdge = 0){
 	srand(time(NULL));
 
@@ -36,12 +37,12 @@ void AttrGenerator::_generateAttribute(const char* attrFolderName,vector<vector<
 	fclose(outInfoFile);
 
 	int numRow = 0;
-	int numDigit1 = countIntDigit(maxDomainSize);
+	int numDigit1 = utility::countIntDigit(maxDomainSize);
 	int numDigit2;
 	if(isEdge == true) 
-		numDigit2 = countIntDigit(numEdge);
+		numDigit2 = utility::countIntDigit(numEdge);
 	else
-		numDigit2 = countIntDigit(topology.size());
+		numDigit2 = utility::countIntDigit(topology.size());
 
 	if(isEdge==true)
 		numRow = numEdge;

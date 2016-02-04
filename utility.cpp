@@ -1,6 +1,33 @@
 #include "utility.h"
 
 
+/*void utility::readSynopsis(const char* synopsisFileName,vector<double>& synopsis){
+	FILE* syFile = fopen(synopsisFileName,"r");
+
+
+
+	fclose(syFile);
+}*/
+
+void utility::readVertexToSuperNodeMapping(const char* superNodeMappingFileName,vector<int>& S){
+	FILE* inFile = fopen(superNodeMappingFileName,"r");
+
+	int id,SN;
+	while(fscanf(inFile,"%d\t%d\n",&id,&SN)!=EOF){
+		S.push_back(SN);
+	}
+
+	fclose(inFile);
+}
+
+int utility::countIntDigit(int x){
+	int length = 1;
+	while ( x /= 10 )
+	   length++;
+
+	return length;
+}
+
 int utility::readTopology(const char* fileName,vector<vector<pair<int,int> > >& topology){
 	printf("Read Topology\n");
 

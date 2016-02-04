@@ -30,6 +30,7 @@ echo start_Run_Expr_Script
 	numQuery=1
 	useConstraint=1
 	hashOpt=1
+	heuristic=1
 	numSuperNode=1000
 	synopsisSize=30
 	
@@ -42,10 +43,10 @@ echo start_Run_Expr_Script
 #	./main 3 $fileName $attrFolderName $hashFolderName
 
 	#construct super graph and synopsis
-	./main 4 $fileName $attrFolderName $numVAttr $numEAttr $numSuperNode $synopsisSize $sFileName $vSynopsisFileName $eSynopsisFileName $vToSNMapFileName
+#	./main 4 $fileName $attrFolderName $numVAttr $numEAttr $numSuperNode $synopsisSize $sFileName $vSynopsisFileName $eSynopsisFileName $vToSNMapFileName
 
 	#query algorithm
-#	./main 5 $fileName $attrFolderName $hashFolderName $numEAttr $numVAttr $vRowSize $eRowSize $numQuery $useConstraint $hashOpt
+	./main 5 $fileName $attrFolderName $hashFolderName $numEAttr $numVAttr $vRowSize $eRowSize $numQuery $useConstraint $hashOpt $heuristic $synopsisSize $sFileName $vSynopsisFileName $eSynopsisFileName $vToSNMapFileName
 #run 5 /Users/duncan/Documents/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/PA_RoadNetwork/roadNet-PA.txt /Users/duncan/Documents/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/PA_RoadNetwork/ /Users/duncan/Documents/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/PA_RoadNetwork/ 10 10 20 38 38 1 0 1
 
 
