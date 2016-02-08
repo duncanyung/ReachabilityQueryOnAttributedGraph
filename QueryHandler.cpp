@@ -26,7 +26,7 @@ pair<bool,int> QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >&
 	clock_t start = clock();
 	char attrFileName[200];
 	sprintf(attrFileName,"%s/VertexAttr.txt",attrFolderName);
-//	computeAllSynopsis(q,vSynopsis,vSynopsisFileName,vSyRowSize,attrFileName,vRowSize,q.vertexAttrCon);
+	//computeAllSynopsis(q,vSynopsis,vSynopsisFileName,vSyRowSize,attrFileName,vRowSize,q.vertexAttrCon);
 	double duration = (clock() - start) / (double) CLOCKS_PER_SEC;
 	printf("Compute All Synopsis Time=%f\n",duration);
 
@@ -159,14 +159,14 @@ void QueryHandler::SuperGraphShortestPath(query& q,int src,int dest,vector<vecto
 				adj.v = adjVertex;
 //				adj.dist = cur.dist*eSynopsis[e]*vSynopsis[adjVertex];
 				if(vSynopsis[adjVertex]==-1){
-					printf("vSynopsis[%d]=%f\n",adjVertex,vSynopsis[adjVertex]);
+					//printf("vSynopsis[%d]=%f\n",adjVertex,vSynopsis[adjVertex]);
 					clock_t start = clock();
 					char attrFileName[200];
 					sprintf(attrFileName,"%s/VertexAttr.txt",attrFolderName);
 					computeSynopsis(q,vSynopsis,adjVertex,vSynopsisFileName,vSyRowSize,attrFileName,vRowSize,q.vertexAttrCon);
 					double duration = (clock() - start) / (double) CLOCKS_PER_SEC;
 					totalDuration = totalDuration + duration;
-					printf("after compute vSynopsis[%d]=%f\n",adjVertex,vSynopsis[adjVertex]);
+					//printf("after compute vSynopsis[%d]=%f\n",adjVertex,vSynopsis[adjVertex]);
 				}
 				adj.dist = cur.dist*vSynopsis[adjVertex];
 				adj.parent = cur.v;
@@ -184,11 +184,11 @@ void QueryHandler::PathRecovery(vector<int>& parents,unordered_set<int>& SSP,int
 
 	int cur = dest;
 	SSP.insert(cur);
-//	printf("%d<-",cur);
+	printf("%d<-",cur);
 	while(cur != src){
 		SSP.insert(parents[cur]);
 		cur = parents[cur];
-//		printf("%d<-",cur);
+		printf("%d<-",cur);
 	}
 	printf("\n");
 //	sleep(100000);

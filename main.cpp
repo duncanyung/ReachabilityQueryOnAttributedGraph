@@ -108,8 +108,8 @@ void Query(char const *argv[]){
 	int numSuperNode = atoi(argv[11]);
 //	int hashOpt = atoi(argv[11]);
 //	int heuristic = atoi(argv[12]);
-	int sySize = atoi(argv[12]);
-	int syRowSize = (sySize+1)*10 + sySize + 1 + 1 + 1;//sySize*(10+1+1)+1;
+	int vSySize = atoi(argv[12]);
+	int vSyRowSize = (vSySize+1)*10 + vSySize + 1 + 1 + 1;//sySize*(10+1+1)+1;
 	const char* sFileName = argv[13];
 	const char* vSynopsisFileName = argv[14];
 	const char* eSynopsisFileName = argv[15];
@@ -160,12 +160,18 @@ void Query(char const *argv[]){
 		double duration;
 		pair<bool,int> ans;
 
+		if(heuristic == 1){
+			char attrFileName[200];
+			sprintf(attrFileName,"%s/VertexAttr.txt",attrFolderName);
+			//qh.computeAllSynopsis(queries[i],vSynopsis,vSynopsisFileName,vSyRowSize,attrFileName,vRowSize,queries[i].vertexAttrCon);
+		}
+
 		//Start Timer HERE!
 		clock_t start = clock();
 
 		for(int i=0; i<queries.size(); i++){
 			ans = qh.CReachabilityQuery(topology,vertexHashValues,edgeHashValues,queries[i],attrFolderName,vRowSize,eRowSize,useConstraint,hashOpt,
-										stopology,vSynopsis,eSynopsis,S,vSynopsisFileName,eSynopsisFileName,syRowSize,heuristic,partitionSize);//S is the vertex to supernode mapping vector
+										stopology,vSynopsis,eSynopsis,S,vSynopsisFileName,eSynopsisFileName,vSyRowSize,heuristic,partitionSize);//S is the vertex to supernode mapping vector
 			if(ans.first==false)
 				notReachableCount++;
 			printf("Query %d Reachable = %d\n",i,ans.first);
