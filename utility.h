@@ -21,8 +21,6 @@ class utility{
 	    	}
 	};
 
-	
-
 	public:
 		static const unsigned long long prime = 9223372036854775783;
 		static const unsigned long long constant = 101; 
@@ -30,6 +28,9 @@ class utility{
 		static const int dblp_vertex_size = 42251 + 1;
 		static const int PA_road_network = 1090918 + 1;
 
+		static void split(const string &,char,vector<int>&,bool);
+		static void splitToString(const string &,char,vector<string>&,bool);
+		static void IOAttr(int,vector<int>&,ifstream&,int,string& attrData);
 		static int countIntDigit(int);
 		void readVertexToSuperNodeMapping(const char*,vector<int>&,vector<int>&);
 		int readTopology(const char*,vector<vector<pair<int,int> > >&,int numSuperNode = 0) ;

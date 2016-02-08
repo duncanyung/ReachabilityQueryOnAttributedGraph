@@ -41,7 +41,7 @@ echo start_Run_Expr_Script
 #	./main 3 $fileName $attrFolderName $hashFolderName
 
 	#construct super graph and synopsis
-#	./main 4 $fileName $attrFolderName $numVAttr $numEAttr $numSuperNode $synopsisSize $sFileName $vSynopsisFileName $eSynopsisFileName $vToSNMapFileName
+#	./main 4 $fileName $attrFolderName $numVAttr $numEAttr $numSuperNode $synopsisSize $vRowSize $sFileName $vSynopsisFileName $eSynopsisFileName $vToSNMapFileName
 
 	#query algorithm
 	./main 5 $fileName $attrFolderName $hashFolderName $numEAttr $numVAttr $vRowSize $eRowSize $numQuery $useConstraint $numSuperNode $synopsisSize $sFileName $vSynopsisFileName $eSynopsisFileName $vToSNMapFileName

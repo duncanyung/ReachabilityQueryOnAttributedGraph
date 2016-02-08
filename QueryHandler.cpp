@@ -1,4 +1,6 @@
 #include "QueryHandler.h"
+#include "utility.h"
+
 
 int IOCount = 0;
 int nodeVisited = 0;
@@ -84,6 +86,38 @@ void QueryHandler::computeAllSynopsis(query& q,vector<double>& vSynopsis,const c
 	}
 }
 
+void QueryHandler::computeSynopsis2(query& q,vector<double>& synopsis,int id,const char* synopsisFileName,int rowSize,
+									const char* attrFileName,int attrRowSize,vector<vector<int> >& attrCon){
+	//use fseek here!
+	ifstream inf(synopsisFileName);
+
+	//get the id^th row in attrFileName
+	string strData;
+	int addr = id*rowSize;
+	inf.seekg(addr);
+	getline(inf,strData);
+
+	IOCount++;
+	vector<string> samples;
+	utility::splitToString(strData,';',samples,false);//true means to skip the first element.
+	if(samples.size()==0)
+		printf("%s\n",strData.c_str());
+
+	inf.close();
+
+	//compute synopsis value
+	int satCount = 0;
+	for(int i=0; i<samples.size(); i++){
+		vector<int> attr;
+		utility::split(samples[i],',',attr,true);
+
+		if(CheckAttr(attr,attrCon))
+			satCount++;
+	}
+//	printf("satCount=%d  samples.size()=%d\n",satCount,samples.size());
+	synopsis[id] = (double)satCount/(double)samples.size();
+}
+
 void QueryHandler::computeSynopsis(query& q,vector<double>& synopsis,int id,const char* synopsisFileName,int rowSize,
 									const char* attrFileName,int attrRowSize,vector<vector<int> >& attrCon){
 	//use fseek here!
@@ -97,7 +131,7 @@ void QueryHandler::computeSynopsis(query& q,vector<double>& synopsis,int id,cons
 
 	IOCount++;
 	vector<int> samples;
-	split(strData,',',samples,true);
+	utility::split(strData,',',samples,true);
 	if(samples.size()==0)
 		printf("%s\n",strData.c_str());
 
@@ -114,7 +148,7 @@ void QueryHandler::computeSynopsis(query& q,vector<double>& synopsis,int id,cons
 
 		IOCount++;
 		vector<int> attr;
-		split(strData2,',',attr,true);
+		utility::split(strData2,',',attr,true);
 		if(CheckAttr(attr,attrCon))
 			satCount++;
 	}
@@ -163,7 +197,7 @@ void QueryHandler::SuperGraphShortestPath(query& q,int src,int dest,vector<vecto
 					clock_t start = clock();
 					char attrFileName[200];
 					sprintf(attrFileName,"%s/VertexAttr.txt",attrFolderName);
-					computeSynopsis(q,vSynopsis,adjVertex,vSynopsisFileName,vSyRowSize,attrFileName,vRowSize,q.vertexAttrCon);
+					computeSynopsis2(q,vSynopsis,adjVertex,vSynopsisFileName,vSyRowSize,attrFileName,vRowSize,q.vertexAttrCon);
 					double duration = (clock() - start) / (double) CLOCKS_PER_SEC;
 					totalDuration = totalDuration + duration;
 					//printf("after compute vSynopsis[%d]=%f\n",adjVertex,vSynopsis[adjVertex]);
@@ -273,7 +307,10 @@ bool QueryHandler::CheckConstraint(int id, vector<unsigned long long>& hashValue
 		return got->second; 
 	}else{
 		vector<int> attr;
-		IOAttr(id,attrFileName,attr,inf,rowSize);
+		string attrData;
+		utility::IOAttr(id,attr,inf,rowSize,attrData);
+		IOCount++;
+
 		if(CheckAttr(attr,con)){
 			if(synopsis[S[id]]!=-1)
 				updateSynopsis(synopsis,S[id],partitionSize[S[id]]);
@@ -286,7 +323,7 @@ bool QueryHandler::CheckConstraint(int id, vector<unsigned long long>& hashValue
 	}
 	return false;
 }
-
+/*
 void QueryHandler::split(const string &s, char delim, vector<int> &elems,bool skipFirst){
     stringstream ss(s);
     string item;
@@ -298,8 +335,8 @@ void QueryHandler::split(const string &s, char delim, vector<int> &elems,bool sk
         	elems.push_back(stoi(item));
         skipFirst = false;
     }
-}
-
+}*/
+/*
 void QueryHandler::IOAttr(int id,const char* attrFileName,vector<int>& attr,ifstream& inf,int rowSize){
 	//get the id^th row in attrFileName
 	string strData;
@@ -309,8 +346,7 @@ void QueryHandler::IOAttr(int id,const char* attrFileName,vector<int>& attr,ifst
 
 	IOCount++;
 	split(strData,',',attr,true);
-
-}
+}*/
 
 bool QueryHandler::CheckAttr(vector<int>& attr,vector<vector<int> >& con){
 	for(int i=0; i<attr.size(); i++){

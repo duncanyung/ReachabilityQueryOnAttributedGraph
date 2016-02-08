@@ -40,6 +40,7 @@ class QueryHandler{
 		void PathRecovery(vector<int>&,unordered_set<int>&,int,int);
 		void computeAllSynopsis(query&,vector<double>&,const char*,int,const char*,int,vector<vector<int> >&);
 		void computeSynopsis(query&,vector<double>&,int,const char*,int,const char*,int,vector<vector<int> >&);
+		void computeSynopsis2(query&,vector<double>&,int,const char*,int,const char*,int,vector<vector<int> >&);
 		void SuperGraphShortestPath(query&,int,int,vector<vector<pair<int,int> > >&,vector<double>&,vector<double>&,unordered_set<int>&,int,
 									const char*,const char*,int,const char*,int,int);
 		bool SimpleBFS(query&,vector<vector<pair<int,int> > >&);
@@ -56,7 +57,7 @@ class QueryHandler{
 		bool CheckConstraint(int,vector<unsigned long long>&,vector<vector<int> > &,unordered_map<unsigned long long,bool>&,const char*,ifstream&,int,bool
 							,vector<int>&,vector<double>&,vector<int>&);
 		void split(const string&,char,vector<int>&,bool);
-		void IOAttr(int,const char*,vector<int>&,ifstream&,int);
+		//void IOAttr(int,const char*,vector<int>&,ifstream&,int);
 		bool CheckAttr(vector<int>&,vector<vector<int> >&);
 		bool isWithinSSP(unordered_set<int>&,int);
 		void updateSynopsis(vector<double>&,int,int);

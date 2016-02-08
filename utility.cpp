@@ -9,6 +9,41 @@
 	fclose(syFile);
 }*/
 
+void utility::split(const string &s, char delim, vector<int> &elems,bool skipFirst){
+    stringstream ss(s);
+    string item;
+    while (getline(ss, item, delim)) {
+    	if(item.compare("")==0)
+    		break;
+
+    	if(skipFirst == false)
+        	elems.push_back(stoi(item));
+        skipFirst = false;
+    }
+}
+
+void utility::splitToString(const string &s, char delim, vector<string> &elems,bool skipFirst){
+    stringstream ss(s);
+    string item;
+    while (getline(ss, item, delim)) {
+    	if(item.compare("")==0)
+    		break;
+
+    	if(skipFirst == false)
+        	elems.push_back(item);
+        skipFirst = false;
+    }
+}
+
+void utility::IOAttr(int id,vector<int>& attr,ifstream& inf,int rowSize,string& strData){
+	//get the id^th row in attrFileName
+	int addr = id*rowSize;
+	inf.seekg(addr);
+	getline(inf,strData);
+
+	split(strData,',',attr,true);
+}
+
 void utility::readVertexToSuperNodeMapping(const char* superNodeMappingFileName,vector<int>& S,vector<int>& partitionSize){
 	FILE* inFile = fopen(superNodeMappingFileName,"r");
 

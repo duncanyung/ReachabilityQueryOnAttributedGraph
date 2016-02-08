@@ -5,8 +5,7 @@
 
 void ConstructSuperGraph::construct(int numSuperNode,int numVertex,int numVAttr,int numEAttr,const char* attrFolderName,const char* sFileName,
 									const char* vSynopsisFileName,const char*  eSynopsisFileName,const char* vToSNMapFileName,
-									vector<vector<pair<int,int> > >& topology,int synopsisSize){
-
+									vector<vector<pair<int,int> > >& topology,int synopsisSize,int vAttrRowSize){
 
 	vector<int> S;//to store vertex to super node mapping
 	S.assign(numVertex,-1);
@@ -30,7 +29,9 @@ void ConstructSuperGraph::construct(int numSuperNode,int numVertex,int numVAttr,
 	//3. build synopsis for super node
 		//draw sample and compute stat (a tree? do linear scan to compute stat first) from sample
 	bool isEdge = false;
-	buildSynopsis(vSynopsisFileName,S,isEdge,numSuperNode,synopsisSize);
+	char attrFileName[200];
+	sprintf(attrFileName,"%s/VertexAttr.txt",attrFolderName);
+	buildSynopsis2(vSynopsisFileName,S,isEdge,numSuperNode,synopsisSize,attrFileName,vAttrRowSize);
 
 	//4. build synopsis for super edge
 		//draw sample and compute stat (a tree? do linear scan to compute stat first) from sample
@@ -71,6 +72,50 @@ void ConstructSuperGraph::buildSynopsis(const char* synopsisFileName,vector<int>
 		fprintf(outFile,"%s\n",row.c_str());
 	}
 	fclose(outFile);
+}
+
+void ConstructSuperGraph::buildSynopsis2(const char* synopsisFileName,vector<int>& S,bool isEdge,int numSuperNode,int synopsisSize,
+										const char* attrFileName,int attrRowSize){
+	srand(time(NULL));
+
+	vector<vector<int> > superNodes;
+	vector<int> superNode;
+	superNodes.assign(numSuperNode,superNode);
+
+	//put vertex ID in to corresponding supernode
+	for(int i=0; i<S.size(); i++)
+		superNodes[S[i]].push_back(i);
+
+	FILE* outFile = fopen(synopsisFileName,"w");
+	ifstream inf(attrFileName);
+
+	for(int i=0; i<numSuperNode; i++){
+		string row="";
+//		row.append(to_string(i+1));
+//		row.append(";");
+
+		vector<int> samples;
+		for(int j=0; j<synopsisSize; j++){
+			int s = rand()%superNodes[i].size();
+			samples.push_back(s);
+			vector<int> attr;
+			string attrData;
+			utility::IOAttr(superNodes[i][s],attr,inf,attrRowSize,attrData);
+
+			row.append(attrData);
+			row.append(";");
+		}
+		row.append(",");
+//		printf("Row length=%d row.length=%d\n",synopsisSize*(10+1+1)+1,row.length());
+		int extraSpace = (synopsisSize+1)*attrRowSize + synopsisSize + 1 + 1 - row.size();
+//		synopsisSize*(10+1+1)+1 - row.length();//numDigit;//assume maximum 10 digits per sample id
+		for(int j=0; j<extraSpace; j++)
+			row.append(" ");
+
+		fprintf(outFile,"%s\n",row.c_str());
+	}
+	fclose(outFile);
+	inf.close();
 }
 
 void ConstructSuperGraph::buildSuperGraph(const char* sFileName,vector<int>& S,vector<vector<pair<int,int> > >& topology,int numSuperNode){

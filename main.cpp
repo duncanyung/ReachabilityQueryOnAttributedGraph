@@ -64,10 +64,11 @@ void Preprocessing(char const *argv[]){
 			int numEAttr = atoi(argv[5]);
 			int numSuperNode = atoi(argv[6]);
 			int synopsisSize = atoi(argv[7]);
-			const char* sFileName = argv[8];
-			const char* vSynopsisFileName = argv[9];
-			const char* eSynopsisFileName = argv[10];
-			const char* vToSNMapFileName = argv[11];
+			int vRowSize = atoi(argv[8]);
+			const char* sFileName = argv[9];
+			const char* vSynopsisFileName = argv[10];
+			const char* eSynopsisFileName = argv[11];
+			const char* vToSNMapFileName = argv[12];
 
 			printf("fileName=%s\n",fileName);
 			printf("attrFolderName=%s\n",attrFolderName);
@@ -84,7 +85,7 @@ void Preprocessing(char const *argv[]){
 
 			ConstructSuperGraph csg;
 			csg.construct(numSuperNode,numVertex,numVAttr,numEAttr,attrFolderName,sFileName,vSynopsisFileName,eSynopsisFileName,
-							vToSNMapFileName,topology,synopsisSize);
+							vToSNMapFileName,topology,synopsisSize,vRowSize);
 
 			break;
 		}default:{
@@ -109,12 +110,12 @@ void Query(char const *argv[]){
 //	int hashOpt = atoi(argv[11]);
 //	int heuristic = atoi(argv[12]);
 	int vSySize = atoi(argv[12]);
-	int vSyRowSize = (vSySize+1)*10 + vSySize + 1 + 1 + 1;//sySize*(10+1+1)+1;
+//	int vSyRowSize = (vSySize+1)*10 + vSySize + 1 + 1 + 1;//sySize*(10+1+1)+1;
+	int vSyRowSize = vRowSize*vSySize + vSySize;//sySize*(10+1+1)+1;
 	const char* sFileName = argv[13];
 	const char* vSynopsisFileName = argv[14];
 	const char* eSynopsisFileName = argv[15];
 	const char* superNodeMappingFileName = argv[16];
-
 
 	//read graph topology into memory
 	utility ut;
@@ -122,10 +123,10 @@ void Query(char const *argv[]){
 	int numEdge = ut.readTopology(fileName,topology);
 	int numSEdge = ut.readTopology(sFileName,stopology,numSuperNode+1);
 
-	printf("fileName=%s\n",fileName);
+/*	printf("fileName=%s\n",fileName);
 	printf("topology.size()=%d numEdge=%d\n",topology.size(),numEdge);
 	printf("sFileName=%s\n",sFileName);
-	printf("stopology.size()=%d numSEdge=%d\n",stopology.size(),numSEdge);
+	printf("stopology.size()=%d numSEdge=%d\n",stopology.size(),numSEdge);*/
 
 	vector<double> vSynopsis,eSynopsis;
 	vSynopsis.assign(stopology.size(),-1);

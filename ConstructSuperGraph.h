@@ -22,7 +22,8 @@ class ConstructSuperGraph{
 
 	public:
 		void buildSynopsis(const char*,vector<int>&,bool,int,int);
-		void construct(int,int,int,int,const char*,const char* ,const char* ,const char*,const char*,vector<vector<pair<int,int> > >&,int);
+		void buildSynopsis2(const char*,vector<int>&,bool,int,int,const char*,int);
+		void construct(int,int,int,int,const char*,const char* ,const char* ,const char*,const char*,vector<vector<pair<int,int> > >&,int,int);
 		void buildSuperGraph(const char*,vector<int>&,vector<vector<pair<int,int> > >&,int);
 		int clustering(const char*,vector<int>&,vector<vector<pair<int,int> > >&,int);
 };
