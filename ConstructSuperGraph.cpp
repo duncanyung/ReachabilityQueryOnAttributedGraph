@@ -13,7 +13,7 @@ void ConstructSuperGraph::construct(int numSuperNode,int numVertex,int numVAttr,
 
 	//1. GraphClustering
 		//partition vertices into k clusters based on vertex and edge attribute similarity
-	clustering(attrFolderName,S,topology,numSuperNode);//has to be O(n+m) or O((n+m)log(n+m)) I/O
+	numSuperNode = clustering(attrFolderName,S,topology,numSuperNode);//has to be O(n+m) or O((n+m)log(n+m)) I/O
 
 	FILE* outFile = fopen(vToSNMapFileName,"w");
 
@@ -46,6 +46,7 @@ void ConstructSuperGraph::buildSynopsis(const char* synopsisFileName,vector<int>
 	vector<int> superNode;
 	superNodes.assign(numSuperNode,superNode);
 
+	//put vertex ID in to corresponding supernode
 	for(int i=0; i<S.size(); i++)
 		superNodes[S[i]].push_back(i);
 
@@ -53,28 +54,22 @@ void ConstructSuperGraph::buildSynopsis(const char* synopsisFileName,vector<int>
 
 	for(int i=0; i<numSuperNode; i++){
 		string row="";
-		int numDigit = 0;
-		numDigit = numDigit + utility::countIntDigit(i+1);
-
-//		fprintf(outFile,"%d,",i+1);
 		row.append(to_string(i+1));
 		row.append(",");
 		for(int j=0; j<synopsisSize; j++){
 			int s = rand()%superNodes[i].size();
-			numDigit = numDigit + utility::countIntDigit(s);
-// 			fprintf(outFile,"%d,",superNodes[i][s]);
 			row.append(to_string(superNodes[i][s]));
 			row.append(",");
 		}
 		row.append(",");
-		int extraSpace = synopsisSize*(10+1+1)+1 - numDigit;//assume maximum 10 digits per sample id
+//		printf("Row length=%d row.length=%d\n",synopsisSize*(10+1+1)+1,row.length());
+		int extraSpace = (synopsisSize+1)*10 + synopsisSize + 1 + 1 - row.size();
+//		synopsisSize*(10+1+1)+1 - row.length();//numDigit;//assume maximum 10 digits per sample id
 		for(int j=0; j<extraSpace; j++)
 			row.append(" ");
-		row.append("\n");
 
 		fprintf(outFile,"%s\n",row.c_str());
 	}
-
 	fclose(outFile);
 }
 
@@ -87,6 +82,8 @@ void ConstructSuperGraph::buildSuperGraph(const char* sFileName,vector<int>& S,v
 	for(int i=0; i<topology.size(); i++){
 		for(int j=0; j<topology[i].size(); j++){
 			int adjVertex = topology[i][j].first;
+
+//			printf("S[%d]=%d stopology.size()=%d\n",i,S[i],stopology.size());
 
 			if(stopology[S[i]].find(S[adjVertex]) == stopology[S[i]].end()){
 				//insert
@@ -106,11 +103,89 @@ void ConstructSuperGraph::buildSuperGraph(const char* sFileName,vector<int>& S,v
 	fclose(outFile);
 }
 
-void ConstructSuperGraph::clustering(const char* attrFolderName,vector<int>& S,vector<vector<pair<int,int> > >& topology,int numSuperNode){
+int ConstructSuperGraph::clustering(const char* attrFolderName,vector<int>& S,vector<vector<pair<int,int> > >& topology,int numSuperNode){
+	srand(time(NULL));
 
 	//just try a simple version of clustering //make another one later
 	int partitionSize = S.size()/(numSuperNode-1);
 
+	vector<bool> visited;
+	visited.assign(topology.size(),false);
+
+	int count = 0, p = -1;
+	for(int i=0; i<numSuperNode; i++){
+		int seed=0;
+
+		do{
+			seed = rand()%topology.size();
+		}while(visited[seed] == true);
+
+		queue<int> qu;
+		qu.push(seed);
+
+		p++;
+		count = 0;
+		while(!qu.empty()){
+			int cur = qu.front();
+			qu.pop();
+
+			if(visited[cur] == true)
+				continue;
+			visited[cur] = true;
+
+			S[cur] = p;
+			count++;
+			if(count == partitionSize)
+				break;
+
+			for(int i=0; i<topology[cur].size(); i++){
+				int adjVertex = topology[cur][i].first;
+				qu.push(adjVertex);
+			}
+		}
+	}
+	printf("num of partition=%d\n",p+1);
+
+	p++;
+	for(int i=0; i<topology.size(); i++){
+		if(S[i] == -1){
+			S[i] = p;
+		}
+	}
+
+	//make every island to be a partition
+/*	for(int i=0; i<topology.size(); i++){
+		if(S[i] == -1){
+			//do a BFS to make a new parition
+			queue<int> qu;
+			qu.push(i);
+
+			p++;//make every island into a partition so p++ here.
+			count = 0;
+			while(!qu.empty()){
+				int cur = qu.front();
+				qu.pop();
+
+				if(visited[cur] == true)
+						continue;
+				visited[cur] = true;
+
+				S[cur] = p;
+				count++;
+				if(count == partitionSize)
+					break;
+
+				for(int i=0; i<topology[cur].size(); i++){
+					int adjVertex = topology[cur][i].first;
+					qu.push(adjVertex);
+				}
+			}
+		}
+	}*/
+	printf("num of partition + island=%d\n",p+1);
+
+	return p+1;//have to +1 here as count from 0 to p has p+1 entries.
+/*
 	int count = 0, p = 0;
 	for(int i=0; i<S.size(); i++){
 		S[i] = p;
@@ -120,7 +195,7 @@ void ConstructSuperGraph::clustering(const char* attrFolderName,vector<int>& S,v
 			p++;
 			count = 0;
 		}
-	}
+	}*/
 }
 
 

@@ -38,32 +38,28 @@ class QueryHandler{
 
 	public:
 		void PathRecovery(vector<int>&,unordered_set<int>&,int,int);
-		void computeSynopsis(query&,vector<double>&,int,const char*,int);
+		void computeAllSynopsis(query&,vector<double>&,const char*,int,const char*,int,vector<vector<int> >&);
+		void computeSynopsis(query&,vector<double>&,int,const char*,int,const char*,int,vector<vector<int> >&);
 		void SuperGraphShortestPath(query&,int,int,vector<vector<pair<int,int> > >&,vector<double>&,vector<double>&,unordered_set<int>&,int,
-									const char*,const char*,int);
+									const char*,const char*,int,const char*,int,int);
 		bool SimpleBFS(query&,vector<vector<pair<int,int> > >&);
-		bool DFS(int,vector<vector<pair<int,int> > >&,query&,vector<bool>&);
 		pair<bool,int> CReachabilityQuery(vector<vector<pair<int,int> > >&,vector<unsigned long long>&,vector<unsigned long long>&,query&,
 											const char*,int,int,bool,bool,
 											vector<vector<pair<int,int> > >&,vector<double>&,vector<double>&,vector<int>&,
-											const char* ,const char*,int,bool);
-//		bool BFS_C(int,vector<vector<pair<int,int> > >&,vector<unsigned long long>&,vector<unsigned long long>&,query&,queue<pair<int,int> >&,
-//					vector<bool>&,unordered_map<unsigned long long,bool>&,unordered_map<unsigned long long,bool>&,const char*,const char*,
-//					ifstream&,ifstream&,int,int,bool,bool,unordered_set<int>,vector<int>&);
+											const char* ,const char*,int,bool,vector<int>&);
 		bool BFS_C(int,vector<vector<pair<int,int> > >&,vector<unsigned long long>&,
 						vector<unsigned long long>&,query&,queue<pair<int,int> >&,vector<bool>&,
 						unordered_map<unsigned long long,bool>&,unordered_map<unsigned long long,bool>&,
 						const char*,const char*,ifstream&,ifstream&,int,
-						int,bool,bool,unordered_set<int>&,vector<int>&,bool);
+						int,bool,bool,unordered_set<int>&,vector<int>&,bool,vector<double>&,vector<int>&);
 
-		bool DFS_C(int,vector<vector<pair<int,int> > >&,vector<unsigned long long>&,vector<unsigned long long>&,query&,queue<pair<int,int> >&,
-					vector<bool>&,unordered_map<unsigned long long,bool>&,unordered_map<unsigned long long,bool>&,const char*,const char*,
-					/*ifstream&,ifstream&,*/int,int,bool);
-		bool CheckConstraint(int,vector<unsigned long long>&,vector<vector<int> > &,unordered_map<unsigned long long,bool>&,const char*,ifstream&,int,bool);
+		bool CheckConstraint(int,vector<unsigned long long>&,vector<vector<int> > &,unordered_map<unsigned long long,bool>&,const char*,ifstream&,int,bool
+							,vector<int>&,vector<double>&,vector<int>&);
 		void split(const string&,char,vector<int>&,bool);
 		void IOAttr(int,const char*,vector<int>&,ifstream&,int);
 		bool CheckAttr(vector<int>&,vector<vector<int> >&);
 		bool isWithinSSP(unordered_set<int>&,int);
+		void updateSynopsis(vector<double>&,int,int);
 };
 
 

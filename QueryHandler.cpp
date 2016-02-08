@@ -1,13 +1,14 @@
 #include "QueryHandler.h"
 
 int IOCount = 0;
+int nodeVisited = 0;
 
 pair<bool,int> QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >& topology,vector<unsigned long long>& vertexHashValues,
 											vector<unsigned long long>& edgeHashValues,query& q,const char* attrFolderName,
 											int vRowSize,int eRowSize,bool useConstraint,bool hashOpt,
 											vector<vector<pair<int,int> > >& stopology,vector<double>& vSynopsis,vector<double>& eSynopsis,
-											vector<int>& S,const char* vSynopsisFileName,const char* eSynopsisFileName,int syRowSize,
-											bool heuristic){
+											vector<int>& S,const char* vSynopsisFileName,const char* eSynopsisFileName,int vSyRowSize,
+											bool heuristic,vector<int>& partitionSize){
 
 	IOCount = 0;
 
@@ -22,6 +23,17 @@ pair<bool,int> QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >&
 	ifstream infV(vertexAttrFileName);
 	ifstream infE(edgeAttrFileName);
 
+	clock_t start = clock();
+	char attrFileName[200];
+	sprintf(attrFileName,"%s/VertexAttr.txt",attrFolderName);
+//	computeAllSynopsis(q,vSynopsis,vSynopsisFileName,vSyRowSize,attrFileName,vRowSize,q.vertexAttrCon);
+	double duration = (clock() - start) / (double) CLOCKS_PER_SEC;
+	printf("Compute All Synopsis Time=%f\n",duration);
+
+	q.src = 718536;
+	q.dest = 912264;
+	printf("src %d dest %d topology.size()=%ld\n",q.src,q.dest,topology.size());
+
 	//no need to check constraint of src
 	qu.push(make_pair(q.src,-1));//the second element of this pair is the super-edge to be ignored in super graph SP search
 	while(!qu.empty()){
@@ -35,46 +47,85 @@ pair<bool,int> QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >&
 ///////////////////////Under Construction////////////////////////////////
 		unordered_set<int> SSP;
 		int SuperEIgnore = h.second;
-		if(heuristic == true)
-			SuperGraphShortestPath(q,S[h.first],S[q.dest],stopology,vSynopsis,eSynopsis,SSP,SuperEIgnore,vSynopsisFileName,eSynopsisFileName,syRowSize);
+		if(heuristic == true){
+			clock_t start = clock();
+			SuperGraphShortestPath(q,S[h.first],S[q.dest],stopology,vSynopsis,eSynopsis,SSP,SuperEIgnore,vSynopsisFileName,eSynopsisFileName,
+									vSyRowSize,attrFolderName,vRowSize,eRowSize);
+			double duration = (clock() - start) / (double) CLOCKS_PER_SEC;
+			printf("SSP Time=%f\n",duration);
+		}
 /////////////////////////////////////////////////////////////////////////
-
+		clock_t start = clock();
 		bool result = BFS_C(h.first,topology,vertexHashValues,edgeHashValues,q,qu,visited,satTableE,satTableV,
-							vertexAttrFileName,edgeAttrFileName,infV,infE,vRowSize,eRowSize,useConstraint,hashOpt,SSP,S,heuristic);
+							vertexAttrFileName,edgeAttrFileName,infV,infE,vRowSize,eRowSize,useConstraint,hashOpt,SSP,S,heuristic,vSynopsis,
+							partitionSize);
+		double duration = (clock() - start) / (double) CLOCKS_PER_SEC;
+		printf("BFS_C Time=%f\n",duration);
 
-//		printf("src %d dest %d topology.size()=%d\n",q.src,q.dest,topology.size());
-
-		if(result == true)
+		if(result == true){
+			printf("NodeVisited=%d\n",nodeVisited);
 			return make_pair(true,IOCount);
+		}
+//		sleep(2);
 	}
-
 	infV.close();
 	infE.close();
+
+	printf("NodeVisited=%d\n",nodeVisited);
 
 	return make_pair(false,IOCount);
 }
 
-void QueryHandler::computeSynopsis(query& q,vector<double>& vSynopsis,int adjVertex,const char* vSynopsisFileName,int rowSize){
+void QueryHandler::computeAllSynopsis(query& q,vector<double>& vSynopsis,const char* vSynopsisFileName,int rowSize,
+										const char* attrFileName,int attrRowSize,vector<vector<int> >& attrCon){
+	for(int i=0; i<vSynopsis.size(); i++){
+//		printf("i=%d vSynopsis.size()=%d\n",i,vSynopsis.size());
+		computeSynopsis(q,vSynopsis,i,vSynopsisFileName,rowSize,attrFileName,attrRowSize,attrCon);
+	}
+}
+
+void QueryHandler::computeSynopsis(query& q,vector<double>& synopsis,int id,const char* synopsisFileName,int rowSize,
+									const char* attrFileName,int attrRowSize,vector<vector<int> >& attrCon){
 	//use fseek here!
-	ifstream inf(vSynopsisFileName);
+	ifstream inf(synopsisFileName);
 
 	//get the id^th row in attrFileName
 	string strData;
-	int addr = adjVertex*rowSize;
+	int addr = id*rowSize;
 	inf.seekg(addr);
 	getline(inf,strData);
 
 	IOCount++;
-//	printf("Row=%d Attr= %s\n",id,strData.c_str());
 	vector<int> samples;
 	split(strData,',',samples,true);
+	if(samples.size()==0)
+		printf("%s\n",strData.c_str());
 
 	inf.close();
+
+	//compute synopsis value
+	ifstream inf2(attrFileName);
+	int satCount = 0;
+	for(int i=0; i<samples.size(); i++){
+		string strData2;
+		int addr = i*attrRowSize;
+		inf2.seekg(addr);
+		getline(inf2,strData2);
+
+		IOCount++;
+		vector<int> attr;
+		split(strData2,',',attr,true);
+		if(CheckAttr(attr,attrCon))
+			satCount++;
+	}
+//	printf("satCount=%d  samples.size()=%d\n",satCount,samples.size());
+	synopsis[id] = (double)satCount/(double)samples.size();
+	inf2.close();
 }
 
 void QueryHandler::SuperGraphShortestPath(query& q,int src,int dest,vector<vector<pair<int,int> > >& stopology,vector<double>& vSynopsis,
 											vector<double>& eSynopsis,unordered_set<int>& SSP,int SuperEIgnore,const char* vSynopsisFileName,
-											const char* eSynopsisFileName,int syRowSize){
+											const char* eSynopsisFileName,int vSyRowSize,const char* attrFolderName,int vRowSize,int eRowSize){
 	vector<int> parents;
 	parents.assign(stopology.size(),-1);
 
@@ -86,6 +137,8 @@ void QueryHandler::SuperGraphShortestPath(query& q,int src,int dest,vector<vecto
 
 	triple p; p.v=src; p.dist=1; p.parent=-1;
 	qu.push(p);
+
+	double totalDuration = 0;
 	while(!qu.empty()){
 		triple cur = qu.top();
 		qu.pop();
@@ -105,15 +158,25 @@ void QueryHandler::SuperGraphShortestPath(query& q,int src,int dest,vector<vecto
 				triple adj;
 				adj.v = adjVertex;
 //				adj.dist = cur.dist*eSynopsis[e]*vSynopsis[adjVertex];
-				if(vSynopsis[adjVertex]==-1)
-					computeSynopsis(q,vSynopsis,adjVertex,vSynopsisFileName,syRowSize);
+				if(vSynopsis[adjVertex]==-1){
+					printf("vSynopsis[%d]=%f\n",adjVertex,vSynopsis[adjVertex]);
+					clock_t start = clock();
+					char attrFileName[200];
+					sprintf(attrFileName,"%s/VertexAttr.txt",attrFolderName);
+					computeSynopsis(q,vSynopsis,adjVertex,vSynopsisFileName,vSyRowSize,attrFileName,vRowSize,q.vertexAttrCon);
+					double duration = (clock() - start) / (double) CLOCKS_PER_SEC;
+					totalDuration = totalDuration + duration;
+					printf("after compute vSynopsis[%d]=%f\n",adjVertex,vSynopsis[adjVertex]);
+				}
 				adj.dist = cur.dist*vSynopsis[adjVertex];
 				adj.parent = cur.v;
 				qu.push(adj);
 			}
 		}
 	}
+	printf("SSP IO Time=%f\n",totalDuration);
 
+	printf("super node src=%d dest=%d\n",src,dest);
 	PathRecovery(parents,SSP,src,dest);
 }
 
@@ -121,17 +184,22 @@ void QueryHandler::PathRecovery(vector<int>& parents,unordered_set<int>& SSP,int
 
 	int cur = dest;
 	SSP.insert(cur);
+//	printf("%d<-",cur);
 	while(cur != src){
 		SSP.insert(parents[cur]);
 		cur = parents[cur];
+//		printf("%d<-",cur);
 	}
+	printf("\n");
+//	sleep(100000);
 }
 
 bool QueryHandler::BFS_C(int cur,vector<vector<pair<int,int> > >& topology,vector<unsigned long long>& vertexHashValues,
 						vector<unsigned long long>& edgeHashValues,query& q,queue<pair<int,int> >& quGlobal,vector<bool>& visited,
 						unordered_map<unsigned long long,bool>& satTableE,unordered_map<unsigned long long,bool>& satTableV,
 						const char* vertexAttrFileName,const char* edgeAttrFileName,ifstream& infV,ifstream& infE,int vRowSize,
-						int eRowSize,bool useConstraint,bool hashOpt,unordered_set<int>& SP,vector<int>& S,bool heuristic){
+						int eRowSize,bool useConstraint,bool hashOpt,unordered_set<int>& SP,vector<int>& S,bool heuristic,
+						vector<double>& vSynopsis,vector<int>& partitionSize){
 
 	queue<pair<int,int> > qu;
 	qu.push(make_pair(cur,-1));
@@ -140,28 +208,38 @@ bool QueryHandler::BFS_C(int cur,vector<vector<pair<int,int> > >& topology,vecto
 		qu.pop();
 
 		int cur = h.first;
-		if(cur==q.dest)
+		if(cur == q.dest)
 			return true;
+
+//		printf("cur=%d S[%d]=%d\n",cur,cur,S[cur]);
 
 		for(int i=0; i<topology[cur].size();i++){
 			int adjVertex = topology[cur][i].first;
+//			printf("adjVertex=%d S[%d]=%d\n",adjVertex,adjVertex,S[adjVertex]);
+
 			if(visited[adjVertex]==true)
 				continue;
-			visited[adjVertex]=true;
+
+			nodeVisited++;
+
+			bool withinSP = isWithinSSP(SP,S[adjVertex]);
+			if(withinSP == true)
+				visited[adjVertex] = true;
 
 			//check Edge constraint
-			int adjEdgeID = topology[cur][i].second;
-			if(useConstraint && (!CheckConstraint(adjEdgeID,edgeHashValues,q.edgeAttrCon,satTableE,edgeAttrFileName,infE,eRowSize,hashOpt)))
-				continue;
+//			int adjEdgeID = topology[cur][i].second;
+//			if(useConstraint && (!CheckConstraint(adjEdgeID,edgeHashValues,q.edgeAttrCon,satTableE,edgeAttrFileName,infE,eRowSize,hashOpt)))
+//				continue;
 			//check Vertex constraint
-			if(useConstraint && (!CheckConstraint(adjVertex,vertexHashValues,q.vertexAttrCon,satTableV,vertexAttrFileName,infV,vRowSize,hashOpt)))
+			if(useConstraint && (!CheckConstraint(adjVertex,vertexHashValues,q.vertexAttrCon,satTableV,vertexAttrFileName,infV,vRowSize,hashOpt,S,vSynopsis,partitionSize)))
 				continue;
 
 			////////////////////////Under Construction//////////////////////////////
 			//if the vertex is in the super path, do below
-			if(!heuristic || isWithinSSP(SP,S[adjVertex])){
+			if(!heuristic || withinSP){
 				//SP is a unordered_set that store the super node in spuer path
 				//S is a vector that store which super node this adjVertex belong to
+				visited[adjVertex] = true;
 				qu.push(make_pair(adjVertex,-1));
 			}else{
 				//put this vertex in the quGlobal
@@ -180,17 +258,25 @@ bool QueryHandler::isWithinSSP(unordered_set<int>& SP,int node){
 		return true;
 }
 
+void QueryHandler::updateSynopsis(vector<double>& synopsis,int id,int paritionSize){
+	synopsis[id]=(synopsis[id]*paritionSize-1)/(double)paritionSize;
+}
+
 bool QueryHandler::CheckConstraint(int id, vector<unsigned long long>& hashValues,vector<vector<int> >& con,
 									unordered_map<unsigned long long,bool>& satTable,const char* attrFileName,ifstream& inf,int rowSize,
-									bool hashOpt){
+									bool hashOpt,vector<int>& S,vector<double>& synopsis,vector<int>& partitionSize){
 
 	unordered_map<unsigned long long,bool>::const_iterator got = satTable.find(hashValues[id]);
 	if(hashOpt && (got!=satTable.end())){
+		if(synopsis[S[id]]!=-1)
+			updateSynopsis(synopsis,S[id],partitionSize[S[id]]);
 		return got->second; 
 	}else{
 		vector<int> attr;
 		IOAttr(id,attrFileName,attr,inf,rowSize);
 		if(CheckAttr(attr,con)){
+			if(synopsis[S[id]]!=-1)
+				updateSynopsis(synopsis,S[id],partitionSize[S[id]]);
 			satTable.insert(make_pair(hashValues[id],true));
 			return true;
 		}else{
@@ -208,18 +294,13 @@ void QueryHandler::split(const string &s, char delim, vector<int> &elems,bool sk
     	if(item.compare("")==0)
     		break;
 
-    	if(skipFirst == false){
+    	if(skipFirst == false)
         	elems.push_back(stoi(item));
-//        	printf("%d ",stoi(item));
-        }
         skipFirst = false;
     }
-//   printf("\n");
 }
 
 void QueryHandler::IOAttr(int id,const char* attrFileName,vector<int>& attr,ifstream& inf,int rowSize){
-	//use fseek here!
-
 	//get the id^th row in attrFileName
 	string strData;
 	int addr = id*rowSize;
@@ -227,7 +308,6 @@ void QueryHandler::IOAttr(int id,const char* attrFileName,vector<int>& attr,ifst
 	getline(inf,strData);
 
 	IOCount++;
-//	printf("Row=%d Attr= %s\n",id,strData.c_str());
 	split(strData,',',attr,true);
 
 }
@@ -272,54 +352,6 @@ bool QueryHandler::SimpleBFS(query& q,vector<vector<pair<int,int> > >& topology)
 				continue;
 			visited[adjVertex]=true;
 			qu.push(make_pair(adjVertex,-1));
-		}
-	}
-
-	return false;
-}
-
-bool QueryHandler::DFS(int cur, vector<vector<pair<int,int> > >& topology,query& q,vector<bool>& visited){
-	for(int i=0; i<topology[cur].size(); i++){
-		int adjVertex = topology[cur][i].first;
-
-		if(adjVertex == q.dest)//No need to check attr of dest.
-			return true;
-
-		if(visited[adjVertex] == false){
-			visited[adjVertex] = true;
-			bool result = QueryHandler::DFS(adjVertex,topology,q,visited);
-			if(result == true)
-				return true;
-		}
-	}
-	return false;
-}
-
-bool QueryHandler::DFS_C(int cur,vector<vector<pair<int,int> > >& topology,vector<unsigned long long>& vertexHashValues,
-						vector<unsigned long long>& edgeHashValues,query& q,queue<pair<int,int> >& qu,vector<bool>& visited,
-						unordered_map<unsigned long long,bool>& satTableE,unordered_map<unsigned long long,bool>& satTableV,
-						const char* vertexAttrFileName,const char* edgeAttrFileName,/*ifstream& infV,ifstream& infE,*/int vRowSize,
-						int eRowSize,bool useConstraint){
-
-//	printf("cur=%d\n",cur);
-	for(int i=0; i<topology[cur].size(); i++){
-		int adjVertex = topology[cur][i].first;
-		if(adjVertex == q.dest)//No need to check attr of dest.
-			return true;
-		if(visited[adjVertex] == false){
-			//check Edge constraint
-/*			int adjEdgeID = topology[cur][i].second;
-			if(useConstraint && (!CheckConstraint(adjEdgeID,edgeHashValues,q.edgeAttrCon,satTableE,edgeAttrFileName,infE,eRowSize)))
-				continue;
-			//check Vertex constraint
-			if(useConstraint && (!CheckConstraint(adjVertex,vertexHashValues,q.vertexAttrCon,satTableV,vertexAttrFileName,infV,vRowSize)))
-				continue;
-*/			
-			visited[adjVertex] = true;
-			bool result = DFS_C(adjVertex,topology,vertexHashValues,edgeHashValues,q,qu,visited,satTableE,satTableV,
-								vertexAttrFileName,edgeAttrFileName,/*infV,infE,*/vRowSize,eRowSize,useConstraint);
-			if(result == true)
-				return true;
 		}
 	}
 

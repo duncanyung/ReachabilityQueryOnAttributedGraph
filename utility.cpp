@@ -9,7 +9,7 @@
 	fclose(syFile);
 }*/
 
-void utility::readVertexToSuperNodeMapping(const char* superNodeMappingFileName,vector<int>& S){
+void utility::readVertexToSuperNodeMapping(const char* superNodeMappingFileName,vector<int>& S,vector<int>& partitionSize){
 	FILE* inFile = fopen(superNodeMappingFileName,"r");
 
 	int id,SN;
@@ -18,6 +18,9 @@ void utility::readVertexToSuperNodeMapping(const char* superNodeMappingFileName,
 	}
 
 	fclose(inFile);
+
+	for(int i=0; i<S.size(); i++)
+		partitionSize[S[i]] = partitionSize[S[i]] + 1;
 }
 
 int utility::countIntDigit(int x){
@@ -28,17 +31,25 @@ int utility::countIntDigit(int x){
 	return length;
 }
 
-int utility::readTopology(const char* fileName,vector<vector<pair<int,int> > >& topology){
+int utility::readTopology(const char* fileName,vector<vector<pair<int,int> > >& topology,int numSuperNode){
 	printf("Read Topology\n");
 
 	int numEdge = 0;
 
 	string sFileName(fileName);
-	if(sFileName.find("soc-pokec-relationships")!=string::npos)
+/*	if(sFileName.find("super-soc-pokec-relationships")!=string::npos)
+		numEdge = readTopologyFormat1(fileName,topology,....);
+	else*/ if(sFileName.find("soc-pokec-relationships")!=string::npos)
 		numEdge = readTopologyFormat1(fileName,topology,soc_pokec_vertex_size);
-	if(sFileName.find("graph_dblp")!=string::npos)
+
+/*	if(sFileName.find("super-graph_dblp")!=string::npos)
+		numEdge = readTopologyFormat1(fileName,topology,....);
+	else*/ if(sFileName.find("graph_dblp")!=string::npos)
 		numEdge = readTopologyFormat1(fileName,topology,dblp_vertex_size);
-	if(sFileName.find("roadNet-PA")!=string::npos)
+
+	if(sFileName.find("super-roadNet-PA")!=string::npos)
+		numEdge = readTopologyFormat1(fileName,topology,numSuperNode);
+	else if(sFileName.find("roadNet-PA")!=string::npos)
 		numEdge = readTopologyFormat1(fileName,topology,PA_road_network);
 
 	return numEdge;
@@ -73,7 +84,7 @@ int utility::scanTopologyFormat1(const char* fileName,vector<vector<pair<int,int
 		pair<int,int> p = make_pair(min(tokens[0],tokens[1]),max(tokens[0],tokens[1]));
 		unordered_map<pair<int,int>,int,pairHash>::const_iterator got = edgeMap.find(p);
 
-		if(got==edgeMap.end()){
+		if(got == edgeMap.end()){
 			edgeMap.insert(make_pair(p,edgeIDCount));
 			eID = edgeIDCount;
 			edgeIDCount++;
@@ -82,6 +93,7 @@ int utility::scanTopologyFormat1(const char* fileName,vector<vector<pair<int,int
 		}
 
 		topology[tokens[0]].push_back(pair<int,int>(tokens[1],eID));
+//		printf("VID=%d topology.size()=%d\n",tokens[0]);
 	}
 	inFile.close();
 

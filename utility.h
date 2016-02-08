@@ -31,8 +31,8 @@ class utility{
 		static const int PA_road_network = 1090918 + 1;
 
 		static int countIntDigit(int);
-		void readVertexToSuperNodeMapping(const char*,vector<int>&);
-		int readTopology(const char*,vector<vector<pair<int,int> > >&);
+		void readVertexToSuperNodeMapping(const char*,vector<int>&,vector<int>&);
+		int readTopology(const char*,vector<vector<pair<int,int> > >&,int numSuperNode = 0) ;
 		int readTopologyFormat1(const char*,vector<vector<pair<int,int> > >&,int);
 		int scanTopologyFormat1(const char*,vector<vector<pair<int,int> > >&);
 		void readAttrHash(const char*,vector<unsigned long long>&,bool);
