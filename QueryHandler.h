@@ -44,7 +44,7 @@ class QueryHandler{
 		void SuperGraphShortestPath(query&,int,int,vector<vector<pair<int,int> > >&,vector<double>&,vector<double>&,unordered_set<int>&,int,
 									const char*,const char*,int,const char*,int,int);
 		bool SimpleBFS(query&,vector<vector<pair<int,int> > >&);
-		pair<bool,int> CReachabilityQuery(vector<vector<pair<int,int> > >&,vector<unsigned long long>&,vector<unsigned long long>&,query&,
+		pair<bool,pair<int,int> > CReachabilityQuery(vector<vector<pair<int,int> > >&,vector<unsigned long long>&,vector<unsigned long long>&,query&,
 											const char*,int,int,bool,bool,
 											vector<vector<pair<int,int> > >&,vector<double>&,vector<double>&,vector<int>&,
 											const char* ,const char*,int,bool,vector<int>&);
@@ -53,8 +53,8 @@ class QueryHandler{
 						unordered_map<unsigned long long,bool>&,unordered_map<unsigned long long,bool>&,
 						const char*,const char*,ifstream&,ifstream&,int,
 						int,bool,bool,unordered_set<int>&,vector<int>&,bool,vector<double>&,vector<int>&);
-
-		bool CheckConstraint(int,vector<unsigned long long>&,vector<vector<int> > &,unordered_map<unsigned long long,bool>&,const char*,ifstream&,int,bool
+		bool CheckConstraint(int,vector<unsigned long long>&,vector<vector<int> > &,unordered_map<unsigned long long,bool>&,const char*,ifstream&,int,bool);
+		bool CheckConstraintWithSynopsisUpdate(int,vector<unsigned long long>&,vector<vector<int> > &,unordered_map<unsigned long long,bool>&,const char*,ifstream&,int,bool
 							,vector<int>&,vector<double>&,vector<int>&);
 		void split(const string&,char,vector<int>&,bool);
 		//void IOAttr(int,const char*,vector<int>&,ifstream&,int);

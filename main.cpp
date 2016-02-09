@@ -107,8 +107,6 @@ void Query(char const *argv[]){
 	int numQuery = atoi(argv[9]);
 	int useConstraint = atoi(argv[10]);
 	int numSuperNode = atoi(argv[11]);
-//	int hashOpt = atoi(argv[11]);
-//	int heuristic = atoi(argv[12]);
 	int vSySize = atoi(argv[12]);
 //	int vSyRowSize = (vSySize+1)*10 + vSySize + 1 + 1 + 1;//sySize*(10+1+1)+1;
 	int vSyRowSize = vRowSize*vSySize + vSySize;//sySize*(10+1+1)+1;
@@ -123,14 +121,7 @@ void Query(char const *argv[]){
 	int numEdge = ut.readTopology(fileName,topology);
 	int numSEdge = ut.readTopology(sFileName,stopology,numSuperNode+1);
 
-/*	printf("fileName=%s\n",fileName);
-	printf("topology.size()=%d numEdge=%d\n",topology.size(),numEdge);
-	printf("sFileName=%s\n",sFileName);
-	printf("stopology.size()=%d numSEdge=%d\n",stopology.size(),numSEdge);*/
-
 	vector<double> vSynopsis,eSynopsis;
-	vSynopsis.assign(stopology.size(),-1);
-	eSynopsis.assign(numSEdge,-1);
 
 	vector<int> S;
 	vector<int> partitionSize;
@@ -154,36 +145,54 @@ void Query(char const *argv[]){
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	int hashOptList[3] =   {1,1,0};
 	int heuristicList[3] = {1,0,0};
-	for(int i=0; i<2; i++){//CAUTION: set 1 HERE!!!!!!
+	for(int i=1; i<2; i++){//CAUTION: set 1 HERE!!!!!!
 		int hashOpt = hashOptList[i];
 		int heuristic = heuristicList[i];
 		int notReachableCount = 0;
-		double duration;
-		pair<bool,int> ans;
+		int totalIO = 0, totalNodeVisited = 0;
+		double maxTime = 0; 
+		int maxIOCount = 0, maxNodeVisisted = 0;
+		double totalDuration = 0, duration;
+		pair<bool,pair<int,int> > ans;
 
-		if(heuristic == 1){
-			char attrFileName[200];
-			sprintf(attrFileName,"%s/VertexAttr.txt",attrFolderName);
-			//qh.computeAllSynopsis(queries[i],vSynopsis,vSynopsisFileName,vSyRowSize,attrFileName,vRowSize,queries[i].vertexAttrCon);
-		}
 
-		//Start Timer HERE!
-		clock_t start = clock();
+//		if(heuristic == 1){
+//			char attrFileName[200];
+//			sprintf(attrFileName,"%s/VertexAttr.txt",attrFolderName);
+//			qh.computeAllSynopsis(queries[i],vSynopsis,vSynopsisFileName,vSyRowSize,attrFileName,vRowSize,queries[i].vertexAttrCon);
+//		}
 
 		for(int i=0; i<queries.size(); i++){
+			vSynopsis.assign(stopology.size(),-1);//reset synopsis
+			eSynopsis.assign(numSEdge,-1);
+			
+			printf("Query %d src=%d dest=%d\n",i+1,queries[i].src,queries[i].dest);
+
+			//Start Timer HERE!
+			clock_t start = clock();
 			ans = qh.CReachabilityQuery(topology,vertexHashValues,edgeHashValues,queries[i],attrFolderName,vRowSize,eRowSize,useConstraint,hashOpt,
 										stopology,vSynopsis,eSynopsis,S,vSynopsisFileName,eSynopsisFileName,vSyRowSize,heuristic,partitionSize);//S is the vertex to supernode mapping vector
+			//End Timer HERE!
+			duration = (clock() - start) / (double) CLOCKS_PER_SEC;
+			totalIO = totalIO + ans.second.first;
+			totalNodeVisited = totalNodeVisited + ans.second.second;
+
+			totalDuration = totalDuration + duration;
 			if(ans.first==false)
 				notReachableCount++;
-			printf("Query %d Reachable = %d\n",i,ans.first);
-//			printf("src %d dest %d topology.size()=%ld\n",queries[i].src,queries[i].dest,topology.size());
+			if(maxTime < duration)
+				maxTime = duration;
+			if(maxIOCount < ans.second.first)
+				maxIOCount = ans.second.first;
+			if(maxNodeVisisted < ans.second.second)
+				maxNodeVisisted = ans.second.second;
+
+			printf("Reachable=%d Time=%f IOCount=%d NodeVisisted=%d\n",ans.first,duration,ans.second.first,ans.second.second);
 		}
 
-		//End Timer HERE!
-		duration = (clock() - start) / (double) CLOCKS_PER_SEC;
-
-		printf("Execution Time per query=%f ,IOCount=%d\n",duration/(double)queries.size(),ans.second);
-		printf("Num of Not Reachable=%d\n\n",notReachableCount);
+		printf("\navg.query time=%fsec avg.IOCount=%f avg.NodeVisisted=%f\n",totalDuration/(double)queries.size(),(double)totalIO/(double)queries.size(),(double)totalNodeVisited/(double)queries.size());
+		printf("maxTime=%f maxIOCount=%d maxNodeVisisted=%d\n",maxTime,maxIOCount,maxNodeVisisted);
+		printf("Num of Not Reachable=%d\n\n\n",notReachableCount);
 	}
 }
 

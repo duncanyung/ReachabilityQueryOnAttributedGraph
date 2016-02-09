@@ -27,7 +27,7 @@ echo start_Run_Expr_Script
 	maxDomainSize=20
 	vRowSize=24
 	eRowSize=24
-	numQuery=1
+	numQuery=100
 	useConstraint=1
 	numSuperNode=1000
 	synopsisSize=30
@@ -45,7 +45,9 @@ echo start_Run_Expr_Script
 
 	#query algorithm
 	./main 5 $fileName $attrFolderName $hashFolderName $numEAttr $numVAttr $vRowSize $eRowSize $numQuery $useConstraint $numSuperNode $synopsisSize $sFileName $vSynopsisFileName $eSynopsisFileName $vToSNMapFileName
-#run 5 /Users/duncan/Documents/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/PA_RoadNetwork/roadNet-PA.txt /Users/duncan/Documents/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/PA_RoadNetwork/ /Users/duncan/Documents/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/PA_RoadNetwork/ 10 10 20 38 38 1 0 1
+#	valgrind ./main 5 $fileName $attrFolderName $hashFolderName $numEAttr $numVAttr $vRowSize $eRowSize $numQuery $useConstraint $numSuperNode $synopsisSize $sFileName $vSynopsisFileName $eSynopsisFileName $vToSNMapFileName
+#run 5 /Users/duncan/Documents/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/PA_RoadNetwork/roadNet-PA.txt /Users/duncan/Documents/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/PA_RoadNetwork/ /Users/duncan/Documents/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/PA_RoadNetwork/ 5 5 24 24 500 1 1000 30 /Users/duncan/Documents/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/PA_RoadNetwork/super-roadNet-PA.txt /Users/duncan/Documents/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/PA_RoadNetwork/vSynopsis-roadNet-PA.txt /Users/duncan/Documents/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/PA_RoadNetwork/eSynopsis-roadNet-PA.txt /Users/duncan/Documents/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/PA_RoadNetwork/vTOSNMap-roadNet-PA.txt
+
 
 
 
