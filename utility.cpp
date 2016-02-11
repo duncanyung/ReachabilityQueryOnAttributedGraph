@@ -1,6 +1,5 @@
 #include "utility.h"
 
-
 /*void utility::readSynopsis(const char* synopsisFileName,vector<double>& synopsis){
 	FILE* syFile = fopen(synopsisFileName,"r");
 

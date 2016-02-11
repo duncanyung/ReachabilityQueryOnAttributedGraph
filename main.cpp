@@ -88,6 +88,22 @@ void Preprocessing(char const *argv[]){
 							vToSNMapFileName,topology,synopsisSize,vRowSize);
 
 			break;
+		}case '5':{
+			printf("Generate Query\n");
+			const char* fileName = argv[2];
+			int numQuery = atoi(argv[3]);
+			const char* attrFolderName = argv[4];
+			const char* queryFileName = argv[5];
+
+			utility ut;
+			vector<vector<pair<int,int> > > topology;
+			int numEdge = ut.readTopology(fileName,topology);
+
+			vector<query> queries;
+			QueryGenerator qg;
+			qg.generateQuery(queries,numQuery,attrFolderName,topology);
+			qg.writeQueries(queries,queryFileName);
+			break;
 		}default:{
 			printf("No Such Function....\n");
 		}
@@ -114,6 +130,7 @@ void Query(char const *argv[]){
 	const char* vSynopsisFileName = argv[14];
 	const char* eSynopsisFileName = argv[15];
 	const char* superNodeMappingFileName = argv[16];
+	const char* queriesFileName = argv[17];
 
 	//read graph topology into memory
 	utility ut;
@@ -136,8 +153,8 @@ void Query(char const *argv[]){
 	//query generator
 	vector<query> queries;
 	QueryGenerator qg;
-	qg.generateQuery(queries,numQuery,attrFolderName,topology);
-
+//	qg.generateQuery(queries,numQuery,attrFolderName,topology);
+	qg.readQueries(queriesFileName,queries,numQuery,numVAttr,numEAttr);
 
 	//query algorithm
 	printf("topology size=%ld  vertexHashValues size=%ld edgeHashValue size=%ld\n\n",topology.size(),vertexHashValues.size(),edgeHashValues.size());
@@ -145,7 +162,7 @@ void Query(char const *argv[]){
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	int hashOptList[3] =   {1,1,0};
 	int heuristicList[3] = {1,0,0};
-	for(int i=1; i<2; i++){//CAUTION: set 1 HERE!!!!!!
+	for(int i=0; i<1; i++){//CAUTION: set 1 HERE!!!!!!
 		int hashOpt = hashOptList[i];
 		int heuristic = heuristicList[i];
 		int notReachableCount = 0;
@@ -201,7 +218,7 @@ int main(int argc, char const *argv[]){
 	printf("***Reachability Query on Attributed Graph***\n");
 	const int function = atoi(argv[1]);
 
-	if(function<5)
+	if(function<6)
 		Preprocessing(argv);
 	else
 		Query(argv);

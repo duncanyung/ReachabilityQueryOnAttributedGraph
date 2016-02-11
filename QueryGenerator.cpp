@@ -1,5 +1,5 @@
 #include "QueryGenerator.h"
-
+#include "utility.h"
 
 int QueryGenerator::getAttributeInfo(char* attrInfoFileName, vector<int>& attrDomain){
 	int numAttr = 0, temp = 0;
@@ -79,9 +79,73 @@ void QueryGenerator::generateQuery(vector<query>& queries,int numQuery,const cha
 			q.edgeAttrCon.push_back(con);
 		}
 
-		if(i%1000 == 0)
+		if(i%10 == 0)
 			printf("Generating Query %d\n",i);
 
 		queries.push_back(q);
 	}
 }
+
+
+void QueryGenerator::writeQueries(vector<query>& queries,const char* queryFileName){
+	
+	FILE* outFile = fopen(queryFileName,"w");
+
+	for(int i=0; i<queries.size(); i++){
+		fprintf(outFile,"%d,%d\n",queries[i].src,queries[i].dest);
+		for(int j=0; j<queries[i].vertexAttrCon.size(); j++){
+			for(int k=0; k<queries[i].vertexAttrCon[j].size(); k++){
+				fprintf(outFile,"%d,",queries[i].vertexAttrCon[j][k]);
+			}
+			fprintf(outFile,"\n");
+		}
+
+		for(int j=0; j<queries[i].edgeAttrCon.size(); j++){
+			for(int k=0; k<queries[i].edgeAttrCon[j].size(); k++){
+				fprintf(outFile,"%d,",queries[i].edgeAttrCon[j][k]);
+			}
+			fprintf(outFile,"\n");
+		}
+	}
+
+	fclose(outFile);
+}
+
+void QueryGenerator::readSrcDest(query& q,ifstream& inf){
+	//read src and dest
+	string strData;
+	getline(inf,strData);
+	vector<int> elems;
+	utility::split(strData,',',elems,false);
+	int src,dest;
+	q.src = elems[0];
+	q.dest = elems[1];
+}
+
+void QueryGenerator::readAttrCon(vector<vector<int> >& attrCon,ifstream& inf,int numAttr){
+
+	for(int i=0; i<numAttr; i++){
+		string strData;
+		getline(inf,strData);
+		vector<int> elems;
+		utility::split(strData,',',elems,false);
+		attrCon.push_back(elems);
+	}
+}
+
+void QueryGenerator::readQueries(const char* queryFileName,vector<query>& queries,int numQueries,int numVertexAttr,
+				int numEdgeAttr){
+	ifstream inf(queryFileName);
+
+	for(int i=0; i<numQueries; i++){
+		query q;
+		readSrcDest(q,inf);
+		readAttrCon(q.vertexAttrCon,inf,numVertexAttr);
+		readAttrCon(q.edgeAttrCon,inf,numEdgeAttr);
+		queries.push_back(q);
+	}
+
+	inf.close();
+}
+
+

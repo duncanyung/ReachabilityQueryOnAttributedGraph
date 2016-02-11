@@ -132,6 +132,11 @@ void ConstructSuperGraph::buildSuperGraph(const char* sFileName,vector<int>& S,v
 
 			if(stopology[S[i]].find(S[adjVertex]) == stopology[S[i]].end()){
 				//insert
+
+				if(S[adjVertex] >= stopology.size()){
+					printf("S[%d]=%d stopology.size()=%d\n",adjVertex,S[adjVertex],stopology.size());
+					sleep(100000);
+				}
 				stopology[S[i]].insert(S[adjVertex]);
 			}
 		}

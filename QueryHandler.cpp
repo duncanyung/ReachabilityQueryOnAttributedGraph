@@ -33,6 +33,8 @@ pair<bool,pair<int,int> > QueryHandler::CReachabilityQuery(vector<vector<pair<in
 	double duration = (clock() - start) / (double) CLOCKS_PER_SEC;
 	printf("Compute All Synopsis Time=%f\n",duration);*/
 
+//	q.src = 767143;
+//	q.dest = 792415;
 	printf("For debug: src %d dest %d topology.size()=%ld\n",q.src,q.dest,topology.size());
 
 	//no need to check constraint of src
@@ -49,10 +51,11 @@ pair<bool,pair<int,int> > QueryHandler::CReachabilityQuery(vector<vector<pair<in
 		int SuperEIgnore = h.second;
 		if(heuristic == true){
 			clock_t start = clock();
+//			printf("SSP.size()=%d\n",SSP.size());
 			SuperGraphShortestPath(q,S[h.first],S[q.dest],stopology,vSynopsis,eSynopsis,SSP,SuperEIgnore,vSynopsisFileName,eSynopsisFileName,
 									vSyRowSize,attrFolderName,vRowSize,eRowSize);
 			double duration = (clock() - start) / (double) CLOCKS_PER_SEC;
-			printf("SSP Time=%f\n",duration);
+//			printf("SSP Time=%f\n",duration);
 		}
 
 		clock_t start = clock();
@@ -60,7 +63,7 @@ pair<bool,pair<int,int> > QueryHandler::CReachabilityQuery(vector<vector<pair<in
 							vertexAttrFileName,edgeAttrFileName,infV,infE,vRowSize,eRowSize,useConstraint,hashOpt,SSP,S,heuristic,vSynopsis,
 							partitionSize);
 		double duration = (clock() - start) / (double) CLOCKS_PER_SEC;
-		printf("BFS_C Time=%f\n",duration);
+//		printf("BFS_C Time=%f\n",duration);
 
 		if(result == true){
 //			printf("NodeVisited=%d\n",nodeVisited);
@@ -169,44 +172,53 @@ void QueryHandler::SuperGraphShortestPath(query& q,int src,int dest,vector<vecto
 	qu.push(p);
 
 	double totalDuration = 0;
+//	printf("parents.size()=%d\n",parents.size());
+
 	while(!qu.empty()){
+//		printf("1\n");
 		triple cur = qu.top();
 		qu.pop();
-
+//		printf("2 cur.v=%d\n",cur.v);
 		if(visited[cur.v] == true)
 			continue;
+//		printf("3\n");
 		parents[cur.v] = cur.parent;
 		visited[cur.v] = true;
-
+//		printf("4\n");
 		if(cur.v == dest)
 			break;
-
+//		printf("5\n");
 		for(int i=0; i<stopology[cur.v].size(); i++){
+//		printf("6 stopology[%d].size()=%d i=%d\n",cur.v,stopology[cur.v].size(),i);
 			int adjVertex = stopology[cur.v][i].first;
+//		printf("7\n");
 			int e = stopology[cur.v][i].second;
+//			printf("adjVertex=%d\n",adjVertex);
 			if(visited[adjVertex] == false && e!=SuperEIgnore){
 				triple adj;
 				adj.v = adjVertex;
+//				printf("cur.v=%d adjVetex=%d\n",cur.v,adjVertex);
 //				adj.dist = cur.dist*eSynopsis[e]*vSynopsis[adjVertex];
 				if(vSynopsis[adjVertex]==-1){
-					//printf("vSynopsis[%d]=%f\n",adjVertex,vSynopsis[adjVertex]);
+//					printf("vSynopsis[%d]=%f\n",adjVertex,vSynopsis[adjVertex]);
 					clock_t start = clock();
 					char attrFileName[200];
 					sprintf(attrFileName,"%s/VertexAttr.txt",attrFolderName);
 					computeSynopsis2(q,vSynopsis,adjVertex,vSynopsisFileName,vSyRowSize,attrFileName,vRowSize,q.vertexAttrCon);
 					double duration = (clock() - start) / (double) CLOCKS_PER_SEC;
 					totalDuration = totalDuration + duration;
-					//printf("after compute vSynopsis[%d]=%f\n",adjVertex,vSynopsis[adjVertex]);
+//					printf("after compute vSynopsis[%d]=%f\n",adjVertex,vSynopsis[adjVertex]);
 				}
 				adj.dist = cur.dist*vSynopsis[adjVertex];
 				adj.parent = cur.v;
 				qu.push(adj);
 			}
 		}
+//		printf("After For\n");
 	}
-	printf("SSP IO Time=%f\n",totalDuration);
+//	printf("SSP IO Time=%f\n",totalDuration);
 
-	printf("super node src=%d dest=%d\n",src,dest);
+//	printf("super node src=%d dest=%d\n",src,dest);
 	PathRecovery(parents,SSP,src,dest);
 }
 
