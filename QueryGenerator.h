@@ -19,7 +19,7 @@ class QueryGenerator{
 
 	public:
 		int getAttributeInfo(char*,vector<int>&);
-		void generateQuery(vector<query>&,int,const char*,vector<vector<pair<int,int> > >&);
+		void generateQuery(vector<query>&,int,const char*,vector<vector<pair<int,int> > >&,int,int,int);
 		void writeQueries(vector<query>&,const char*);
 		void readSrcDest(query&,ifstream&);
 		void readAttrCon(vector<vector<int> >&,ifstream&,int);

@@ -49,10 +49,12 @@ void Preprocessing(char const *argv[]){
 			//prase parameters
 			const char* attrFolderName = argv[3];
 			const char* hashFolderName = argv[4];
+			int numVAttr = atoi(argv[5]);
+			int numEAttr = atoi(argv[6]);
 
 			//Compute and store Hash Value to File
 			ComputeHashValue ch;
-			ch.computeHashValue(hashFolderName,attrFolderName);
+			ch.computeHashValue(hashFolderName,attrFolderName,numVAttr,numEAttr);
 
 			break;
 		}case '4':{//super-graph construction [not to use super graph first]
@@ -94,6 +96,9 @@ void Preprocessing(char const *argv[]){
 			int numQuery = atoi(argv[3]);
 			const char* attrFolderName = argv[4];
 			const char* queryFileName = argv[5];
+			int numVAttr = atoi(argv[6]);
+			int numEAttr = atoi(argv[7]);
+			int numConstraint = atoi(argv[8]);
 
 			utility ut;
 			vector<vector<pair<int,int> > > topology;
@@ -101,7 +106,7 @@ void Preprocessing(char const *argv[]){
 
 			vector<query> queries;
 			QueryGenerator qg;
-			qg.generateQuery(queries,numQuery,attrFolderName,topology);
+			qg.generateQuery(queries,numQuery,attrFolderName,topology,numConstraint,numVAttr,numEAttr);
 			qg.writeQueries(queries,queryFileName);
 			break;
 		}default:{
@@ -162,7 +167,7 @@ void Query(char const *argv[]){
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	int hashOptList[3] =   {1,1,0};
 	int heuristicList[3] = {1,0,0};
-	for(int i=0; i<1; i++){//CAUTION: set 1 HERE!!!!!!
+	for(int i=2; i<3; i++){//CAUTION: set 1 HERE!!!!!!
 		int hashOpt = hashOptList[i];
 		int heuristic = heuristicList[i];
 		int notReachableCount = 0;

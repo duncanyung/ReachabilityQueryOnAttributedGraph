@@ -15,11 +15,11 @@ void AttrGenerator::_generateAttribute(const char* attrFolderName,vector<vector<
 
 	char fileName[200],infoFileName[200];
 	if(isEdge==true){
-		sprintf(fileName,"%s/EdgeAttr.txt",attrFolderName);
-		sprintf(infoFileName,"%s/EdgeAttrInfo.txt",attrFolderName);
+		sprintf(fileName,"%s/%dEdgeAttr.txt",attrFolderName,numAttr);
+		sprintf(infoFileName,"%s/%dEdgeAttrInfo.txt",attrFolderName,numAttr);
 	}else{
-		sprintf(fileName,"%s/VertexAttr.txt",attrFolderName);
-		sprintf(infoFileName,"%s/VertexAttrInfo.txt",attrFolderName);
+		sprintf(fileName,"%s/%dVertexAttr.txt",attrFolderName,numAttr);
+		sprintf(infoFileName,"%s/%dVertexAttrInfo.txt",attrFolderName,numAttr);
 	}
 
 	FILE * outInfoFile = fopen(infoFileName,"w");

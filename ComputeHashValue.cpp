@@ -46,16 +46,16 @@ void ComputeHashValue::_computeHashValue(char* attrHashFileName, char* attrFileN
 	//3. compute the count
 //}
 
-void ComputeHashValue::computeHashValue(const char* hashFolderName,const char* attrFolderName){
+void ComputeHashValue::computeHashValue(const char* hashFolderName,const char* attrFolderName,int numVAttr,int numEAttr){
 
 	char vertexAttrFileName[200],edgeAttrFileName[200],vertexAttrHashFileName[200],edgeAttrHashFileName[200],
 			vertexAttrInfoFileName[200],edgeAttrInfoFileName[200];
-	sprintf(vertexAttrHashFileName,"%s/VertexAttrHash.txt",hashFolderName);
-	sprintf(edgeAttrHashFileName,"%s/EdgeAttrHash.txt",hashFolderName);
-	sprintf(vertexAttrFileName,"%s/VertexAttr.txt",attrFolderName);
-	sprintf(edgeAttrFileName,"%s/EdgeAttr.txt",attrFolderName);
-	sprintf(vertexAttrInfoFileName,"%s/VertexAttrInfo.txt",attrFolderName);
-	sprintf(edgeAttrInfoFileName,"%s/EdgeAttrInfo.txt",attrFolderName);
+	sprintf(vertexAttrHashFileName,"%s/%dVertexAttrHash.txt",hashFolderName,numVAttr);
+	sprintf(edgeAttrHashFileName,"%s/%dEdgeAttrHash.txt",hashFolderName,numEAttr);
+	sprintf(vertexAttrFileName,"%s/%dVertexAttr.txt",attrFolderName,numVAttr);
+	sprintf(edgeAttrFileName,"%s/%dEdgeAttr.txt",attrFolderName,numEAttr);
+	sprintf(vertexAttrInfoFileName,"%s/%dVertexAttrInfo.txt",attrFolderName,numVAttr);
+	sprintf(edgeAttrInfoFileName,"%s/%dEdgeAttrInfo.txt",attrFolderName,numEAttr);
 
 
 	_computeHashValue(vertexAttrHashFileName,vertexAttrFileName,vertexAttrInfoFileName,true);
