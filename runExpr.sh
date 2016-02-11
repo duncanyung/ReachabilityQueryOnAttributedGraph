@@ -28,10 +28,11 @@ echo start_Run_Expr_Script
 	maxDomainSize=20
 	vRowSize=24
 	eRowSize=24
-	numQuery=1000
+	numQuery=100
 	useConstraint=1
 	numSuperNode=1000
 	synopsisSize=30
+	numConstraint=0
 	
 
 	#generate Attribute
@@ -39,13 +40,13 @@ echo start_Run_Expr_Script
 #run 1 /home/duncan/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/PA_RoadNetwork/roadNet-PA.txt /home/duncan/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/PA_RoadNetwork/ /home/duncan/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/PA_RoadNetwork/ 10 10 20 38 38
 
 	#generate hash value
-#	./main 3 $fileName $attrFolderName $hashFolderName
+#	./main 3 $fileName $attrFolderName $hashFolderName $numVAttr $numEAttr
 
 	#construct super graph and synopsis
 #	./main 4 $fileName $attrFolderName $numVAttr $numEAttr $numSuperNode $synopsisSize $vRowSize $sFileName $vSynopsisFileName $eSynopsisFileName $vToSNMapFileName
 
 	#generate Queries
-	./main 5 $fileName $numQuery $attrFolderName $queryFileName
+	./main 5 $fileName $numQuery $attrFolderName $queryFileName $numVAttr $numEAttr $numConstraint
 
 	#query algorithm
 #	./main 6 $fileName $attrFolderName $hashFolderName $numEAttr $numVAttr $vRowSize $eRowSize $numQuery $useConstraint $numSuperNode $synopsisSize $sFileName $vSynopsisFileName $eSynopsisFileName $vToSNMapFileName $queryFileName

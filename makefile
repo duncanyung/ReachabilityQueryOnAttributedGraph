@@ -5,9 +5,9 @@
 #LINKOPTS = -static -L/usr/lib/Motif1.2 -L/usr/lib/X11R5 -lm
 
 #			HP-UX
-#CC       = g++
-#CCOPTS   = -c -O
-LINK     = g++ -g -Wl,-stack_size -Wl,1000000 
+CC       = g++
+CCOPTS   = -std=c++11 -c -O
+LINK     = g++ -g -Wall 
 #LINKOPTS = -lm -lcryptopp
 
 UTIL = AttrGenerator.o utility.o ComputeHashValue.o QueryHandler.o QueryGenerator.o ConstructSuperGraph.o
@@ -15,8 +15,10 @@ UTIL = AttrGenerator.o utility.o ComputeHashValue.o QueryHandler.o QueryGenerato
 #UTIL  = utility.o func.o dataobj.o blk_file.o MRtree.o
 #UTIL  = utility.o AttrGenerator.o
 
-#.cc.o:
-#	$(CC) $(CCOPTS) $<
+.cc.o:
+	$(CC) $(CCOPTS) $<
+.cpp.o:
+	$(CC) $(CCOPTS) $<
 
 #all: cont
 
@@ -49,7 +51,7 @@ AttrGenerator.o: AttrGenerator.cpp AttrGenerator.h
 utility.o: utility.cpp utility.h
 
 main: main.o $(UTIL)
-	$(LINK) -o main main.o $(UTIL) $(LINKOPTS)
+	$(LINK) -std=c++11 -o main main.o $(UTIL) $(LINKOPTS)
 
 #bmain: bmain.o $(UTIL)
 #	$(LINK) -o bmain bmain.o $(UTIL) $(LINKOPTS)
