@@ -5,12 +5,7 @@
 int IOCount = 0;
 int nodeVisited = 0;
 
-pair<bool,pair<int,int> > QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >& topology,vector<unsigned long long>& vertexHashValues,
-											vector<unsigned long long>& edgeHashValues,query& q,const char* attrFolderName,
-											int vRowSize,int eRowSize,bool useConstraint,bool hashOpt,
-											vector<vector<pair<int,int> > >& stopology,vector<double>& vSynopsis,vector<double>& eSynopsis,
-											vector<int>& S,const char* vSynopsisFileName,const char* eSynopsisFileName,int vSyRowSize,
-											bool heuristic,vector<int>& partitionSize){
+pair<bool,pair<int,int> > QueryHandler::CReachabilityQuery(vector<vector<pair<int,int> > >& topology,vector<unsigned long long>& vertexHashValues,vector<unsigned long long>& edgeHashValues,query& q,const char* attrFolderName,int vRowSize,int eRowSize,bool useConstraint,bool hashOpt,vector<vector<pair<int,int> > >& stopology,vector<double>& vSynopsis,vector<double>& eSynopsis,vector<int>& S,const char* vSynopsisFileName,const char* eSynopsisFileName,int vSyRowSize,bool heuristic,vector<int>& partitionSize,int numVAttr,int numEAttr){
 
 	IOCount = 0;
 	nodeVisited = 0;
@@ -21,8 +16,8 @@ pair<bool,pair<int,int> > QueryHandler::CReachabilityQuery(vector<vector<pair<in
 	unordered_map<unsigned long long,bool> satTableE,satTableV;
 
 	char vertexAttrFileName[200],edgeAttrFileName[200];
-	sprintf(vertexAttrFileName,"%s/VertexAttr.txt",attrFolderName);
-	sprintf(edgeAttrFileName,"%s/EdgeAttr.txt",attrFolderName);
+	sprintf(vertexAttrFileName,"%s/%dVertexAttr.txt",attrFolderName,numVAttr);
+	sprintf(edgeAttrFileName,"%s/%dEdgeAttr.txt",attrFolderName,numEAttr);
 	ifstream infV(vertexAttrFileName);
 	ifstream infE(edgeAttrFileName);
 

@@ -14,5 +14,5 @@ class ComputeHashValue{
 
 public:
 	void _computeHashValue(char*,char*,char*,bool);
-	void computeHashValue(const char*,const char*,int,int);
+	void computeHashValue(const char*,int,int,int);
 };

@@ -10,16 +10,17 @@ int AttrGenerator::countIntDigit(int x){
 	return length;
 }
 */
+
 void AttrGenerator::_generateAttribute(const char* attrFolderName,vector<vector<pair<int,int> > >& topology,int numAttr,int maxDomainSize,bool isEdge,int numEdge = 0){
 	srand(time(NULL));
 
 	char fileName[200],infoFileName[200];
 	if(isEdge==true){
-		sprintf(fileName,"%s/%dEdgeAttr.txt",attrFolderName,numAttr);
-		sprintf(infoFileName,"%s/%dEdgeAttrInfo.txt",attrFolderName,numAttr);
+		sprintf(fileName,"%s/numEAttr=%dmaxDom=%dEdgeAttr.txt",attrFolderName,numAttr,maxDomainSize);
+		sprintf(infoFileName,"%s/numEAttr=%dmaxDom=%dEdgeAttrInfo.txt",attrFolderName,numAttr,maxDomainSize);
 	}else{
-		sprintf(fileName,"%s/%dVertexAttr.txt",attrFolderName,numAttr);
-		sprintf(infoFileName,"%s/%dVertexAttrInfo.txt",attrFolderName,numAttr);
+		sprintf(fileName,"%s/numVAttr=%dmaxDom=%dVertexAttr.txt",attrFolderName,numAttr,maxDomainSize);
+		sprintf(infoFileName,"%s/numVAttr=%dmaxDom=%dVertexAttrInfo.txt",attrFolderName,numAttr,maxDomainSize);
 	}
 
 	FILE * outInfoFile = fopen(infoFileName,"w");

@@ -47,7 +47,7 @@ class QueryHandler{
 		pair<bool,pair<int,int> > CReachabilityQuery(vector<vector<pair<int,int> > >&,vector<unsigned long long>&,vector<unsigned long long>&,query&,
 											const char*,int,int,bool,bool,
 											vector<vector<pair<int,int> > >&,vector<double>&,vector<double>&,vector<int>&,
-											const char* ,const char*,int,bool,vector<int>&);
+											const char* ,const char*,int,bool,vector<int>&,int,int);
 		bool BFS_C(int,vector<vector<pair<int,int> > >&,vector<unsigned long long>&,
 						vector<unsigned long long>&,query&,queue<pair<int,int> >&,vector<bool>&,
 						unordered_map<unsigned long long,bool>&,unordered_map<unsigned long long,bool>&,

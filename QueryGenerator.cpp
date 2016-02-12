@@ -17,13 +17,13 @@ int QueryGenerator::getAttributeInfo(char* attrInfoFileName, vector<int>& attrDo
 	return numAttr;
 }
 
-void QueryGenerator::generateQuery(vector<query>& queries,int numQuery,const char* attrFolderName,vector<vector<pair<int,int> > >& topology,int numConstraint,int numVAttr,int numEAttr){
+void QueryGenerator::generateQuery(vector<query>& queries,int numQuery,const char* folderName,vector<vector<pair<int,int> > >& topology,int numConstraint,int numVAttr,int numEAttr,int maxDom){
 
 	char vertexAttrFileName[200],edgeAttrFileName[200],vertexAttrInfoFileName[200],edgeAttrInfoFileName[200];
-	sprintf(vertexAttrFileName,"%s/%dVertexAttr.txt",attrFolderName,numVAttr);
-	sprintf(edgeAttrFileName,"%s/%dEdgeAttr.txt",attrFolderName,numEAttr);
-	sprintf(vertexAttrInfoFileName,"%s/%dVertexAttrInfo.txt",attrFolderName,numVAttr);
-	sprintf(edgeAttrInfoFileName,"%s/%dEdgeAttrInfo.txt",attrFolderName,numEAttr);
+	sprintf(vertexAttrFileName,"%s/numVAttr=%dmaxDom=%dVertexAttr.txt",folderName,numVAttr,maxDom);
+	sprintf(edgeAttrFileName,"%s/numEAttr=%dmaxDom=%dEdgeAttr.txt",folderName,numEAttr,maxDom);
+	sprintf(vertexAttrInfoFileName,"%s/numVAttr=%dmaxDom=%dVertexAttrInfo.txt",folderName,numVAttr,maxDom);
+	sprintf(edgeAttrInfoFileName,"%s/numEAttr=%dmaxDom=%dEdgeAttrInfo.txt",folderName,numEAttr,maxDom);
 
 	vector<int> vertexAttrDomain;	vector<int> edgeAttrDomain;
 //	int numVAttr = 0,numEAttr = 0;
@@ -89,8 +89,11 @@ void QueryGenerator::generateQuery(vector<query>& queries,int numQuery,const cha
 }
 
 
-void QueryGenerator::writeQueries(vector<query>& queries,const char* queryFileName){
+void QueryGenerator::writeQueries(vector<query>& queries,const char* folderName,int numVAttr,int numEAttr,int maxDom){
 	
+	char queryFileName[200];
+	sprintf(queryFileName,"%s/numVAttr=%dnumEAttr=%dmaxDom=%dquery.txt",folderName,numVAttr,numEAttr,maxDom);
+
 	FILE* outFile = fopen(queryFileName,"w");
 
 	for(int i=0; i<queries.size(); i++){

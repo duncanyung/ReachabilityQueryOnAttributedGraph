@@ -3,16 +3,22 @@
 
 
 
-void ConstructSuperGraph::construct(int numSuperNode,int numVertex,int numVAttr,int numEAttr,const char* attrFolderName,const char* sFileName,
-									const char* vSynopsisFileName,const char*  eSynopsisFileName,const char* vToSNMapFileName,
-									vector<vector<pair<int,int> > >& topology,int synopsisSize,int vAttrRowSize){
+void ConstructSuperGraph::construct(int numSuperNode,int numVertex,int numVAttr,int numEAttr,const char* folderName,vector<vector<pair<int,int> > >& topology,int synopsisSize,int vAttrRowSize,int maxDom){
+
+	bool isEdge = false;
+	char attrFileName[200],vSynopsisFileName[200],eSynopsisFileName[200],sFileName[200],vToSNMapFileName[200];
+	sprintf(vToSNMapFileName,"%s/numVAttr=%dnumEAttr=%dmaxDom=%dnumSN=%dsySize=%ddsToSNMap.txt",folderName,numVAttr,numEAttr,maxDom,numSuperNode,synopsisSize);
+	sprintf(sFileName,"%s/numVAttr=%dnumEAttr=%dmaxDom=%dnumSN=%dsySize=%dSuperGraph.txt",folderName,numVAttr,numEAttr,maxDom,numSuperNode,synopsisSize);
+	sprintf(attrFileName,"%s/numVAttr=%dmaxDom=%dnumSN=%dsySize=%dVertexAttr.txt",folderName,numVAttr,maxDom,numSuperNode,synopsisSize);
+	sprintf(vSynopsisFileName,"%s/numVAttr=%dmaxDom=%dnumSN=%dsySize=%dvSynopsis.txt",folderName,numVAttr,maxDom,numSuperNode,synopsisSize);
+	sprintf(eSynopsisFileName,"%s/numEAttr=%dmaxDom=%dnumSN=%dsySize=%deSynopsis.txt",folderName,numEAttr,maxDom,numSuperNode,synopsisSize);
 
 	vector<int> S;//to store vertex to super node mapping
 	S.assign(numVertex,-1);
 
 	//1. GraphClustering
 		//partition vertices into k clusters based on vertex and edge attribute similarity
-	numSuperNode = clustering(attrFolderName,S,topology,numSuperNode);//has to be O(n+m) or O((n+m)log(n+m)) I/O
+	numSuperNode = clustering(folderName,S,topology,numSuperNode);//has to be O(n+m) or O((n+m)log(n+m)) I/O
 
 	FILE* outFile = fopen(vToSNMapFileName,"w");
 
@@ -21,16 +27,14 @@ void ConstructSuperGraph::construct(int numSuperNode,int numVertex,int numVAttr,
 
 	fclose(outFile);
 
-
 	//2. build and save super graph
 		//assign edge into super Edge
+
+
 	buildSuperGraph(sFileName,S,topology,numSuperNode);
 
 	//3. build synopsis for super node
 		//draw sample and compute stat (a tree? do linear scan to compute stat first) from sample
-	bool isEdge = false;
-	char attrFileName[200];
-	sprintf(attrFileName,"%s/VertexAttr.txt",attrFolderName);
 	buildSynopsis2(vSynopsisFileName,S,isEdge,numSuperNode,synopsisSize,attrFileName,vAttrRowSize);
 
 	//4. build synopsis for super edge

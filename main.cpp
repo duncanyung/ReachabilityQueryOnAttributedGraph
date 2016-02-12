@@ -18,11 +18,11 @@ void Preprocessing(char const *argv[]){
 
 			//prase parameters
 			const char* fileName = argv[2];
-			const char* attrFolderName = argv[3];
+			const char* folderName = argv[3];
 			int numVAttr = atoi(argv[4]);
 			int numEAttr = atoi(argv[5]);
 			int maxDomainSize = atoi(argv[6]);
-			printf("%s %s %d %d %d\n",fileName,attrFolderName,numVAttr,numEAttr,maxDomainSize);
+			printf("%s %s %d %d %d\n",fileName,folderName,numVAttr,numEAttr,maxDomainSize);
 			
 			
 			//read topology
@@ -32,7 +32,7 @@ void Preprocessing(char const *argv[]){
 
 			//generate attribute on the topology
 			AttrGenerator genAttr;
-			genAttr.generateAttribute(attrFolderName,topology,numVAttr,numEAttr,maxDomainSize,numEdge);
+			genAttr.generateAttribute(folderName,topology,numVAttr,numEAttr,maxDomainSize,numEdge);
 
 			break;
 		}case '2':{//pre-processing real data attributes
@@ -47,37 +47,27 @@ void Preprocessing(char const *argv[]){
 			printf("hash scheme index construction\n");
 
 			//prase parameters
-			const char* attrFolderName = argv[3];
-			const char* hashFolderName = argv[4];
-			int numVAttr = atoi(argv[5]);
-			int numEAttr = atoi(argv[6]);
+			const char* folderName = argv[3];
+			int numVAttr = atoi(argv[4]);
+			int numEAttr = atoi(argv[5]);
+			int maxDom = atoi(argv[6]);
 
 			//Compute and store Hash Value to File
 			ComputeHashValue ch;
-			ch.computeHashValue(hashFolderName,attrFolderName,numVAttr,numEAttr);
+			ch.computeHashValue(folderName,numVAttr,numEAttr,maxDom);
 
 			break;
 		}case '4':{//super-graph construction [not to use super graph first]
 			printf("super-graph construction\n");
 
 			const char* fileName = argv[2];
-			const char* attrFolderName = argv[3];
+			const char* folderName = argv[3];
 			int numVAttr = atoi(argv[4]);
 			int numEAttr = atoi(argv[5]);
 			int numSuperNode = atoi(argv[6]);
 			int synopsisSize = atoi(argv[7]);
 			int vRowSize = atoi(argv[8]);
-			const char* sFileName = argv[9];
-			const char* vSynopsisFileName = argv[10];
-			const char* eSynopsisFileName = argv[11];
-			const char* vToSNMapFileName = argv[12];
-
-			printf("fileName=%s\n",fileName);
-			printf("attrFolderName=%s\n",attrFolderName);
-			printf("%d,%d,%d,%d\n",numVAttr,numEAttr,numSuperNode,synopsisSize);
-			printf("sFileName=%s\n",sFileName);
-			printf("vSynopsisFileName=%s\n",vSynopsisFileName);
-
+			int maxDom = atoi(argv[9]);
 
 			//read topology
 			utility ut;
@@ -86,19 +76,18 @@ void Preprocessing(char const *argv[]){
 			int numVertex = topology.size();
 
 			ConstructSuperGraph csg;
-			csg.construct(numSuperNode,numVertex,numVAttr,numEAttr,attrFolderName,sFileName,vSynopsisFileName,eSynopsisFileName,
-							vToSNMapFileName,topology,synopsisSize,vRowSize);
+			csg.construct(numSuperNode,numVertex,numVAttr,numEAttr,folderName,topology,synopsisSize,vRowSize,maxDom);
 
 			break;
 		}case '5':{
 			printf("Generate Query\n");
 			const char* fileName = argv[2];
 			int numQuery = atoi(argv[3]);
-			const char* attrFolderName = argv[4];
-			const char* queryFileName = argv[5];
-			int numVAttr = atoi(argv[6]);
-			int numEAttr = atoi(argv[7]);
-			int numConstraint = atoi(argv[8]);
+			const char* folderName = argv[4];
+			int numVAttr = atoi(argv[5]);
+			int numEAttr = atoi(argv[6]);
+			int numConstraint = atoi(argv[7]);
+			int maxDom = atoi(argv[8]);
 
 			utility ut;
 			vector<vector<pair<int,int> > > topology;
@@ -106,8 +95,8 @@ void Preprocessing(char const *argv[]){
 
 			vector<query> queries;
 			QueryGenerator qg;
-			qg.generateQuery(queries,numQuery,attrFolderName,topology,numConstraint,numVAttr,numEAttr);
-			qg.writeQueries(queries,queryFileName);
+			qg.generateQuery(queries,numQuery,folderName,topology,numConstraint,numVAttr,numEAttr,maxDom);
+			qg.writeQueries(queries,folderName,numVAttr,numEAttr,maxDom);
 			break;
 		}default:{
 			printf("No Such Function....\n");
@@ -167,7 +156,7 @@ void Query(char const *argv[]){
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	int hashOptList[3] =   {1,1,0};
 	int heuristicList[3] = {1,0,0};
-	for(int i=2; i<3; i++){//CAUTION: set 1 HERE!!!!!!
+	for(int i=0; i<1; i++){//CAUTION: set 1 HERE!!!!!!
 		int hashOpt = hashOptList[i];
 		int heuristic = heuristicList[i];
 		int notReachableCount = 0;
@@ -193,7 +182,7 @@ void Query(char const *argv[]){
 			//Start Timer HERE!
 			clock_t start = clock();
 			ans = qh.CReachabilityQuery(topology,vertexHashValues,edgeHashValues,queries[i],attrFolderName,vRowSize,eRowSize,useConstraint,hashOpt,
-										stopology,vSynopsis,eSynopsis,S,vSynopsisFileName,eSynopsisFileName,vSyRowSize,heuristic,partitionSize);//S is the vertex to supernode mapping vector
+										stopology,vSynopsis,eSynopsis,S,vSynopsisFileName,eSynopsisFileName,vSyRowSize,heuristic,partitionSize,numVAttr,numEAttr);//S is the vertex to supernode mapping vector
 			//End Timer HERE!
 			duration = (clock() - start) / (double) CLOCKS_PER_SEC;
 			totalIO = totalIO + ans.second.first;
