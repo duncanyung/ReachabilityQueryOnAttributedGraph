@@ -6,6 +6,7 @@
 class triple{
 
 	public:
-		int v,dist,parent;
+		int v,parent;
+		double dist;
 
 };

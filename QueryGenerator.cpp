@@ -26,11 +26,8 @@ void QueryGenerator::generateQuery(vector<query>& queries,int numQuery,const cha
 	sprintf(edgeAttrInfoFileName,"%s/numEAttr=%dmaxDom=%dEdgeAttrInfo.txt",folderName,numEAttr,maxDom);
 
 	vector<int> vertexAttrDomain;	vector<int> edgeAttrDomain;
-//	int numVAttr = 0,numEAttr = 0;
 
-//	numVAttr = 
 	getAttributeInfo(vertexAttrInfoFileName,vertexAttrDomain);
-//	numEAttr = 
 	getAttributeInfo(edgeAttrInfoFileName,edgeAttrDomain);
 
 	srand(time(NULL));

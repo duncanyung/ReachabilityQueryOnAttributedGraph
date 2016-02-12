@@ -109,8 +109,6 @@ void Query(char const *argv[]){
 	/*Query Time Functions*/
 	const char* fileName = argv[2];
 	const char* folderName = argv[3];
-//	const char* attrFolderName = argv[3];
-//	const char* hashFolderName = argv[4];
 	int numEAttr = atoi(argv[4]);
 	int numVAttr = atoi(argv[5]);
 	int vRowSize = atoi(argv[6]);
@@ -119,14 +117,9 @@ void Query(char const *argv[]){
 	int useConstraint = atoi(argv[9]);
 	int numSuperNode = atoi(argv[10]);
 	int vSySize = atoi(argv[11]);
-//	int vSyRowSize = (vSySize+1)*10 + vSySize + 1 + 1 + 1;//sySize*(10+1+1)+1;
 	int vSyRowSize = vRowSize*vSySize + vSySize;//sySize*(10+1+1)+1;
-//	const char* sFileName = argv[13];
-//	const char* vSynopsisFileName = argv[14];
-//	const char* eSynopsisFileName = argv[15];
-//	const char* superNodeMappingFileName = argv[16];
-//	const char* queriesFileName = argv[17];
 	int maxDom = atoi(argv[12]);
+	const char* outFolderName = argv[13];
 
 	char sFileName[200],vSynopsisFileName[200],eSynopsisFileName[200],superNodeMappingFileName[200],queryFileName[200];
 	sprintf(sFileName,"%s/numVAttr=%dnumEAttr=%dmaxDom=%dnumSN=%dsySize=%dSuperGraph.txt",folderName,numVAttr,numEAttr,maxDom,numSuperNode,vSySize);
@@ -169,7 +162,7 @@ void Query(char const *argv[]){
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	int hashOptList[3] =   {1,1,0};
 	int heuristicList[3] = {1,0,0};
-	for(int i=2; i<3; i++){//CAUTION: set 1 HERE!!!!!!
+	for(int i=0; i<1; i++){//CAUTION: set 1 HERE!!!!!!
 		int hashOpt = hashOptList[i];
 		int heuristic = heuristicList[i];
 		int notReachableCount = 0;

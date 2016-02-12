@@ -16,8 +16,6 @@ pair<bool,pair<int,int> > QueryHandler::CReachabilityQuery(vector<vector<pair<in
 	unordered_map<unsigned long long,bool> satTableE,satTableV;
 
 	char vertexAttrFileName[200],edgeAttrFileName[200];
-//	sprintf(vertexAttrFileName,"%s/%dVertexAttr.txt",attrFolderName,numVAttr);
-//	sprintf(edgeAttrFileName,"%s/%dEdgeAttr.txt",attrFolderName,numEAttr);
 	sprintf(vertexAttrFileName,"%s/numVAttr=%dmaxDom=%dVertexAttr.txt",attrFolderName,numVAttr,maxDom);
 	sprintf(edgeAttrFileName,"%s/numEAttr=%dmaxDom=%dEdgeAttr.txt",attrFolderName,numEAttr,maxDom);
 	ifstream infV(vertexAttrFileName);
@@ -40,16 +38,14 @@ pair<bool,pair<int,int> > QueryHandler::CReachabilityQuery(vector<vector<pair<in
 		int SuperEIgnore = h.second;
 		if(heuristic == true){
 			clock_t start = clock();
-//			printf("SSP.size()=%d\n",SSP.size());
+//			printf("super Src=%d super Dest=%d\n",S[h.first],S[q.dest]);
 			SuperGraphShortestPath(q,S[h.first],S[q.dest],stopology,vSynopsis,eSynopsis,SSP,SuperEIgnore,vSynopsisFileName,eSynopsisFileName,vSyRowSize,vertexAttrFileName,vRowSize,eRowSize);
 			double duration = (clock() - start) / (double) CLOCKS_PER_SEC;
 //			printf("SSP Time=%f\n",duration);
 		}
 
 		clock_t start = clock();
-		bool result = BFS_C(h.first,topology,vertexHashValues,edgeHashValues,q,qu,visited,satTableE,satTableV,
-							vertexAttrFileName,edgeAttrFileName,infV,infE,vRowSize,eRowSize,useConstraint,hashOpt,SSP,S,heuristic,vSynopsis,
-							partitionSize);
+		bool result = BFS_C(h.first,topology,vertexHashValues,edgeHashValues,q,qu,visited,satTableE,satTableV,vertexAttrFileName,edgeAttrFileName,infV,infE,vRowSize,eRowSize,useConstraint,hashOpt,SSP,S,heuristic,vSynopsis,partitionSize);
 		double duration = (clock() - start) / (double) CLOCKS_PER_SEC;
 //		printf("BFS_C Time=%f\n",duration);
 
@@ -152,30 +148,25 @@ void QueryHandler::SuperGraphShortestPath(query& q,int src,int dest,vector<vecto
 	typedef	priority_queue<triple,vector<triple>,mycomparison> myPriorityQueue;
 	myPriorityQueue qu;
 
-	triple p; p.v=src; p.dist=1; p.parent=-1;
+	triple p; p.v=src; p.dist=0; p.parent=-1;
 	qu.push(p);
 
 	double totalDuration = 0;
 //	printf("parents.size()=%d\n",parents.size());
 
 	while(!qu.empty()){
-//		printf("1\n");
 		triple cur = qu.top();
 		qu.pop();
-//		printf("2 cur.v=%d\n",cur.v);
 		if(visited[cur.v] == true)
 			continue;
-//		printf("3\n");
+
+//		printf("dist=%f\n",cur.dist);
 		parents[cur.v] = cur.parent;
 		visited[cur.v] = true;
-//		printf("4\n");
 		if(cur.v == dest)
 			break;
-//		printf("5\n");
 		for(int i=0; i<stopology[cur.v].size(); i++){
-//		printf("6 stopology[%d].size()=%d i=%d\n",cur.v,stopology[cur.v].size(),i);
 			int adjVertex = stopology[cur.v][i].first;
-//		printf("7\n");
 			int e = stopology[cur.v][i].second;
 //			printf("adjVertex=%d\n",adjVertex);
 			if(visited[adjVertex] == false && e!=SuperEIgnore){
@@ -193,7 +184,8 @@ void QueryHandler::SuperGraphShortestPath(query& q,int src,int dest,vector<vecto
 					totalDuration = totalDuration + duration;
 //					printf("after compute vSynopsis[%d]=%f\n",adjVertex,vSynopsis[adjVertex]);
 				}
-				adj.dist = cur.dist*vSynopsis[adjVertex];
+//				printf("cur.dist=%f vSynopsis[adjVertex]=%f\n",cur.dist,vSynopsis[adjVertex]);
+				adj.dist = cur.dist+(1-vSynopsis[adjVertex]);
 				adj.parent = cur.v;
 				qu.push(adj);
 			}
@@ -209,14 +201,17 @@ void QueryHandler::SuperGraphShortestPath(query& q,int src,int dest,vector<vecto
 void QueryHandler::PathRecovery(vector<int>& parents,unordered_set<int>& SSP,int src,int dest){
 
 	int cur = dest;
+//	int count =0;
 	SSP.insert(cur);
-	printf("%d<-",cur);
+//	count++;
+//	printf("%d<-",cur);
 	while(cur != src){
 		SSP.insert(parents[cur]);
 		cur = parents[cur];
-		printf("%d<-",cur);
+//		printf("%d<-",cur);
+//		count++;
 	}
-	printf("\n");
+//	printf("count=%d\n",count);
 //	sleep(100000);
 }
 
@@ -307,7 +302,7 @@ bool QueryHandler::CheckConstraintWithSynopsisUpdate(int id, vector<unsigned lon
 
 	unordered_map<unsigned long long,bool>::const_iterator got = satTable.find(hashValues[id]);
 	if(hashOpt && (got!=satTable.end())){
-		if(synopsis[S[id]]!=-1)
+		if(synopsis[S[id]]!=-1 && got->second==true)
 			updateSynopsis(synopsis,S[id],partitionSize[S[id]]);
 		return got->second; 
 	}else{

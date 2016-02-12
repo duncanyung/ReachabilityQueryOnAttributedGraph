@@ -8,6 +8,7 @@ echo start_Run_Expr_Script
 	function=1
 	fileName='/home/duncan/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/PA_RoadNetwork/roadNet-PA.txt'
 	folderName='/home/duncan/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/PA_RoadNetwork'
+	outFolderName='/home/duncan/Documents/PhD_Thesis_Project/ReachabilityQueryOnAttributedGraph_Data/PA_RoadNetwork/ExprResult'
 
 
 	numEAttr=5
@@ -35,7 +36,7 @@ echo start_Run_Expr_Script
 #	./main 5 $fileName $numQuery $folderName $numVAttr $numEAttr $numConstraint $maxDomainSize
 
 	#query algorithm
-	./main 6 $fileName $folderName $numEAttr $numVAttr $vRowSize $eRowSize $numQuery $useConstraint $numSuperNode $synopsisSize $maxDomainSize
+	./main 6 $fileName $folderName $numEAttr $numVAttr $vRowSize $eRowSize $numQuery $useConstraint $numSuperNode $synopsisSize $maxDomainSize $outFolderName
 
 
 

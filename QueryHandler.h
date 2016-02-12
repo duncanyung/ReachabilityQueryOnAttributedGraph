@@ -28,12 +28,12 @@ class QueryHandler{
 			mycomparison(const bool& revparam=false)
 	 		{reverse=revparam;}
 	  	
-	  		bool operator() (const triple& lhs, const triple&rhs) const{
-			    if (reverse) 
-			    	return (lhs.dist>rhs.dist);
-		    	else 
-		    		return (lhs.dist<rhs.dist);
-	  	}
+	  		bool operator() (const triple& lhs, const triple& rhs) const{
+				if(reverse)
+				    	return (lhs.dist>rhs.dist);
+			    	else 
+			    		return (lhs.dist<rhs.dist);
+	  		}
 	};
 
 	public:
