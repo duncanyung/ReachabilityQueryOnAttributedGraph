@@ -108,23 +108,32 @@ void Query(char const *argv[]){
 	printf("Do Query\n");
 	/*Query Time Functions*/
 	const char* fileName = argv[2];
-	const char* attrFolderName = argv[3];
-	const char* hashFolderName = argv[4];
-	int numEAttr = atoi(argv[5]);
-	int numVAttr = atoi(argv[6]);
-	int vRowSize = atoi(argv[7]);
-	int eRowSize = atoi(argv[8]);
-	int numQuery = atoi(argv[9]);
-	int useConstraint = atoi(argv[10]);
-	int numSuperNode = atoi(argv[11]);
-	int vSySize = atoi(argv[12]);
+	const char* folderName = argv[3];
+//	const char* attrFolderName = argv[3];
+//	const char* hashFolderName = argv[4];
+	int numEAttr = atoi(argv[4]);
+	int numVAttr = atoi(argv[5]);
+	int vRowSize = atoi(argv[6]);
+	int eRowSize = atoi(argv[7]);
+	int numQuery = atoi(argv[8]);
+	int useConstraint = atoi(argv[9]);
+	int numSuperNode = atoi(argv[10]);
+	int vSySize = atoi(argv[11]);
 //	int vSyRowSize = (vSySize+1)*10 + vSySize + 1 + 1 + 1;//sySize*(10+1+1)+1;
 	int vSyRowSize = vRowSize*vSySize + vSySize;//sySize*(10+1+1)+1;
-	const char* sFileName = argv[13];
-	const char* vSynopsisFileName = argv[14];
-	const char* eSynopsisFileName = argv[15];
-	const char* superNodeMappingFileName = argv[16];
-	const char* queriesFileName = argv[17];
+//	const char* sFileName = argv[13];
+//	const char* vSynopsisFileName = argv[14];
+//	const char* eSynopsisFileName = argv[15];
+//	const char* superNodeMappingFileName = argv[16];
+//	const char* queriesFileName = argv[17];
+	int maxDom = atoi(argv[12]);
+
+	char sFileName[200],vSynopsisFileName[200],eSynopsisFileName[200],superNodeMappingFileName[200],queryFileName[200];
+	sprintf(sFileName,"%s/numVAttr=%dnumEAttr=%dmaxDom=%dnumSN=%dsySize=%dSuperGraph.txt",folderName,numVAttr,numEAttr,maxDom,numSuperNode,vSySize);
+	sprintf(vSynopsisFileName,"%s/numVAttr=%dmaxDom=%dnumSN=%dsySize=%dvSynopsis.txt",folderName,numVAttr,maxDom,numSuperNode,vSySize);
+//no use //sprintf(eSynopsisFileName,"%s/numEAttr=%dmaxDom=%dnumSN=%dsySize=%deSynopsis.txt",folderName,numEAttr,maxDom,numSuperNode,eSySize);	
+	sprintf(superNodeMappingFileName,"%s/numVAttr=%dnumEAttr=%dmaxDom=%dnumSN=%dsySize=%dsToSNMap.txt",folderName,numVAttr,numEAttr,maxDom,numSuperNode,vSySize);
+	sprintf(queryFileName,"%s/numVAttr=%dnumEAttr=%dmaxDom=%dquery.txt",folderName,numVAttr,numEAttr,maxDom);
 
 	//read graph topology into memory
 	utility ut;
@@ -141,14 +150,18 @@ void Query(char const *argv[]){
 
 	//read hash values into memory
 	vector<unsigned long long> vertexHashValues,edgeHashValues;
-	ut.readAttrHash(hashFolderName,vertexHashValues,false);
-	ut.readAttrHash(hashFolderName,edgeHashValues,true);
+	char vHashFileName[200],eHashFileName[200];
+	sprintf(vHashFileName,"%s/numVAttr=%dmaxDom=%dVertexAttrHash.txt",folderName,numVAttr,maxDom);
+	sprintf(eHashFileName,"%s/numEAttr=%dmaxDom=%dEdgeAttrHash.txt",folderName,numEAttr,maxDom);
+
+	ut.readAttrHash(vHashFileName,vertexHashValues,false);
+	ut.readAttrHash(eHashFileName,edgeHashValues,true);
 
 	//query generator
 	vector<query> queries;
 	QueryGenerator qg;
-//	qg.generateQuery(queries,numQuery,attrFolderName,topology);
-	qg.readQueries(queriesFileName,queries,numQuery,numVAttr,numEAttr);
+//	qg.generateQuery(queries,numQuery,folderName,topology);
+	qg.readQueries(queryFileName,queries,numQuery,numVAttr,numEAttr);
 
 	//query algorithm
 	printf("topology size=%ld  vertexHashValues size=%ld edgeHashValue size=%ld\n\n",topology.size(),vertexHashValues.size(),edgeHashValues.size());
@@ -156,7 +169,7 @@ void Query(char const *argv[]){
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	int hashOptList[3] =   {1,1,0};
 	int heuristicList[3] = {1,0,0};
-	for(int i=0; i<1; i++){//CAUTION: set 1 HERE!!!!!!
+	for(int i=2; i<3; i++){//CAUTION: set 1 HERE!!!!!!
 		int hashOpt = hashOptList[i];
 		int heuristic = heuristicList[i];
 		int notReachableCount = 0;
@@ -169,7 +182,7 @@ void Query(char const *argv[]){
 
 //		if(heuristic == 1){
 //			char attrFileName[200];
-//			sprintf(attrFileName,"%s/VertexAttr.txt",attrFolderName);
+//			sprintf(attrFileName,"%s/VertexAttr.txt",folderName);
 //			qh.computeAllSynopsis(queries[i],vSynopsis,vSynopsisFileName,vSyRowSize,attrFileName,vRowSize,queries[i].vertexAttrCon);
 //		}
 
@@ -181,8 +194,7 @@ void Query(char const *argv[]){
 
 			//Start Timer HERE!
 			clock_t start = clock();
-			ans = qh.CReachabilityQuery(topology,vertexHashValues,edgeHashValues,queries[i],attrFolderName,vRowSize,eRowSize,useConstraint,hashOpt,
-										stopology,vSynopsis,eSynopsis,S,vSynopsisFileName,eSynopsisFileName,vSyRowSize,heuristic,partitionSize,numVAttr,numEAttr);//S is the vertex to supernode mapping vector
+			ans = qh.CReachabilityQuery(topology,vertexHashValues,edgeHashValues,queries[i],folderName,vRowSize,eRowSize,useConstraint,hashOpt,stopology,vSynopsis,eSynopsis,S,vSynopsisFileName,eSynopsisFileName,vSyRowSize,heuristic,partitionSize,numVAttr,numEAttr,maxDom);//S is the vertex to supernode mapping vector
 			//End Timer HERE!
 			duration = (clock() - start) / (double) CLOCKS_PER_SEC;
 			totalIO = totalIO + ans.second.first;

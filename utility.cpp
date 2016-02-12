@@ -44,6 +44,8 @@ void utility::IOAttr(int id,vector<int>& attr,ifstream& inf,int rowSize,string& 
 }
 
 void utility::readVertexToSuperNodeMapping(const char* superNodeMappingFileName,vector<int>& S,vector<int>& partitionSize){
+	printf("Read Vertex To SuperNode Mapping\n");
+
 	FILE* inFile = fopen(superNodeMappingFileName,"r");
 
 	int id,SN;
@@ -73,18 +75,20 @@ int utility::readTopology(const char* fileName,vector<vector<pair<int,int> > >& 
 	string sFileName(fileName);
 /*	if(sFileName.find("super-soc-pokec-relationships")!=string::npos)
 		numEdge = readTopologyFormat1(fileName,topology,....);
-	else*/ if(sFileName.find("soc-pokec-relationships")!=string::npos)
+	else if(sFileName.find("soc-pokec-relationships")!=string::npos)
 		numEdge = readTopologyFormat1(fileName,topology,soc_pokec_vertex_size);
-
+*/
 /*	if(sFileName.find("super-graph_dblp")!=string::npos)
 		numEdge = readTopologyFormat1(fileName,topology,....);
-	else*/ if(sFileName.find("graph_dblp")!=string::npos)
+	else if(sFileName.find("graph_dblp")!=string::npos)
 		numEdge = readTopologyFormat1(fileName,topology,dblp_vertex_size);
-
-	if(sFileName.find("super-roadNet-PA")!=string::npos)
-		numEdge = readTopologyFormat1(fileName,topology,numSuperNode);
-	else if(sFileName.find("roadNet-PA")!=string::npos)
-		numEdge = readTopologyFormat1(fileName,topology,PA_road_network);
+*/
+	if(sFileName.find("PA_RoadNetwork")!=string::npos){
+		if(sFileName.find("SuperGraph")!=string::npos)
+			numEdge = readTopologyFormat1(fileName,topology,numSuperNode);
+		else if(sFileName.find("roadNet-PA")!=string::npos)
+			numEdge = readTopologyFormat1(fileName,topology,PA_road_network);
+	}
 
 	return numEdge;
 }
@@ -145,13 +149,15 @@ int  utility::readTopologyFormat1(const char* fileName,vector<vector<pair<int,in
 
 }
 
-void utility::readAttrHash(const char* attrFolderName,vector<unsigned long long>& hashValues,bool isEdge){
-	char fileName[200];
+void utility::readAttrHash(const char* fileName,vector<unsigned long long>& hashValues,bool isEdge){
+	printf("Read Hash Value\n");
+
+/*	char fileName[200];
 	if(isEdge==true)
 		sprintf(fileName,"%s/EdgeAttrHash.txt",attrFolderName);
 	else
 		sprintf(fileName,"%s/VertexAttrHash.txt",attrFolderName);
-
+*/
 	FILE* inFile = fopen(fileName,"r");
 
 	int id = 0;

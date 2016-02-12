@@ -23,21 +23,19 @@ echo start_Run_Expr_Script
 	
 
 	#generate Attribute
-	./main 1 $fileName $folderName $numVAttr $numEAttr $maxDomainSize $vRowSize $eRowSize
+#	./main 1 $fileName $folderName $numVAttr $numEAttr $maxDomainSize $vRowSize $eRowSize
 
 	#generate hash value
-	./main 3 $fileName $folderName $numVAttr $numEAttr $maxDomainSize
+#	./main 3 $fileName $folderName $numVAttr $numEAttr $maxDomainSize
 
 	#construct super graph and synopsis
-	./main 4 $fileName $folderName $numVAttr $numEAttr $numSuperNode $synopsisSize $vRowSize $maxDomainSize
+#	./main 4 $fileName $folderName $numVAttr $numEAttr $numSuperNode $synopsisSize $vRowSize $maxDomainSize
 
 	#generate Queries
-	./main 5 $fileName $numQuery $folderName $numVAttr $numEAttr $numConstraint $maxDomainSize
+#	./main 5 $fileName $numQuery $folderName $numVAttr $numEAttr $numConstraint $maxDomainSize
 
 	#query algorithm
-#	./main 6 $fileName $attrFolderName $hashFolderName $numEAttr $numVAttr $vRowSize $eRowSize $numQuery $useConstraint $numSuperNode $synopsisSize $sFileName $vSynopsisFileName $eSynopsisFileName $vToSNMapFileName $queryFileName
-
-
+	./main 6 $fileName $folderName $numEAttr $numVAttr $vRowSize $eRowSize $numQuery $useConstraint $numSuperNode $synopsisSize $maxDomainSize
 
 
 

@@ -138,8 +138,9 @@ void QueryGenerator::readAttrCon(vector<vector<int> >& attrCon,ifstream& inf,int
 	}
 }
 
-void QueryGenerator::readQueries(const char* queryFileName,vector<query>& queries,int numQueries,int numVertexAttr,
-				int numEdgeAttr){
+void QueryGenerator::readQueries(const char* queryFileName,vector<query>& queries,int numQueries,int numVertexAttr,int numEdgeAttr){
+	printf("Read Query\n");
+
 	ifstream inf(queryFileName);
 
 	for(int i=0; i<numQueries; i++){

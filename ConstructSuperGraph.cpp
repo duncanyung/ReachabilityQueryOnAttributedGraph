@@ -7,9 +7,9 @@ void ConstructSuperGraph::construct(int numSuperNode,int numVertex,int numVAttr,
 
 	bool isEdge = false;
 	char attrFileName[200],vSynopsisFileName[200],eSynopsisFileName[200],sFileName[200],vToSNMapFileName[200];
-	sprintf(vToSNMapFileName,"%s/numVAttr=%dnumEAttr=%dmaxDom=%dnumSN=%dsySize=%ddsToSNMap.txt",folderName,numVAttr,numEAttr,maxDom,numSuperNode,synopsisSize);
+	sprintf(vToSNMapFileName,"%s/numVAttr=%dnumEAttr=%dmaxDom=%dnumSN=%dsySize=%dsToSNMap.txt",folderName,numVAttr,numEAttr,maxDom,numSuperNode,synopsisSize);
 	sprintf(sFileName,"%s/numVAttr=%dnumEAttr=%dmaxDom=%dnumSN=%dsySize=%dSuperGraph.txt",folderName,numVAttr,numEAttr,maxDom,numSuperNode,synopsisSize);
-	sprintf(attrFileName,"%s/numVAttr=%dmaxDom=%dnumSN=%dsySize=%dVertexAttr.txt",folderName,numVAttr,maxDom,numSuperNode,synopsisSize);
+	sprintf(attrFileName,"%s/numVAttr=%dmaxDom=%dVertexAttr.txt",folderName,numVAttr,maxDom);
 	sprintf(vSynopsisFileName,"%s/numVAttr=%dmaxDom=%dnumSN=%dsySize=%dvSynopsis.txt",folderName,numVAttr,maxDom,numSuperNode,synopsisSize);
 	sprintf(eSynopsisFileName,"%s/numEAttr=%dmaxDom=%dnumSN=%dsySize=%deSynopsis.txt",folderName,numEAttr,maxDom,numSuperNode,synopsisSize);
 
