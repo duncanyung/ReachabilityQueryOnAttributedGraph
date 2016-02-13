@@ -14,9 +14,9 @@ echo start_Run_Expr_Script
 	numEAttr=5
 	numVAttr=5
 	maxDomainSize=20
-	vRowSize=24
-	eRowSize=24
-	numQuery=100
+	vRowSize=30
+	eRowSize=30
+	numQuery=10
 	useConstraint=1
 	numSuperNode=1000
 	synopsisSize=30
@@ -36,7 +36,7 @@ echo start_Run_Expr_Script
 #	./main 5 $fileName $numQuery $folderName $numVAttr $numEAttr $numConstraint $maxDomainSize
 
 	#query algorithm
-	./main 6 $fileName $folderName $numEAttr $numVAttr $vRowSize $eRowSize $numQuery $useConstraint $numSuperNode $synopsisSize $maxDomainSize $outFolderName
+	./main 6 $fileName $folderName $numEAttr $numVAttr $vRowSize $eRowSize $numQuery $useConstraint $numSuperNode $synopsisSize $maxDomainSize $outFolderName $numConstraint
 
 
 

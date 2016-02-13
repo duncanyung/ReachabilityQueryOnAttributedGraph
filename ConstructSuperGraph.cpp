@@ -95,17 +95,14 @@ void ConstructSuperGraph::buildSynopsis2(const char* synopsisFileName,vector<int
 
 	for(int i=0; i<numSuperNode; i++){
 		string row="";
-//		row.append(to_string(i+1));
-//		row.append(";");
 
-		vector<int> samples;
 		for(int j=0; j<synopsisSize; j++){
 			int s = rand()%superNodes[i].size();
-			samples.push_back(s);
 			vector<int> attr;
 			string attrData;
 			utility::IOAttr(superNodes[i][s],attr,inf,attrRowSize,attrData);
 
+//			printf("superNodes[i][s]=%d length=%d %s\n",superNodes[i][s],attrData.length(),attrData.c_str());
 			row.append(attrData);
 			row.append(";");
 		}
@@ -116,6 +113,7 @@ void ConstructSuperGraph::buildSynopsis2(const char* synopsisFileName,vector<int
 		for(int j=0; j<extraSpace; j++)
 			row.append(" ");
 
+//		printf("%s\n",row.c_str());
 		fprintf(outFile,"%s\n",row.c_str());
 	}
 	fclose(outFile);

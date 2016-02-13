@@ -22,7 +22,9 @@ void Preprocessing(char const *argv[]){
 			int numVAttr = atoi(argv[4]);
 			int numEAttr = atoi(argv[5]);
 			int maxDomainSize = atoi(argv[6]);
-			printf("%s %s %d %d %d\n",fileName,folderName,numVAttr,numEAttr,maxDomainSize);
+			int vRowSize = atoi(argv[7]);
+			int eRowSize = atoi(argv[8]);
+			printf("%s %s %d %d %d %d %d\n",fileName,folderName,numVAttr,numEAttr,maxDomainSize,vRowSize,eRowSize);
 			
 			
 			//read topology
@@ -32,7 +34,7 @@ void Preprocessing(char const *argv[]){
 
 			//generate attribute on the topology
 			AttrGenerator genAttr;
-			genAttr.generateAttribute(folderName,topology,numVAttr,numEAttr,maxDomainSize,numEdge);
+			genAttr.generateAttribute(folderName,topology,numVAttr,numEAttr,maxDomainSize,numEdge,vRowSize,eRowSize);
 
 			break;
 		}case '2':{//pre-processing real data attributes
@@ -120,6 +122,7 @@ void Query(char const *argv[]){
 	int vSyRowSize = vRowSize*vSySize + vSySize;//sySize*(10+1+1)+1;
 	int maxDom = atoi(argv[12]);
 	const char* outFolderName = argv[13];
+	int numConstraint = atoi(argv[14]);
 
 	char sFileName[200],vSynopsisFileName[200],eSynopsisFileName[200],superNodeMappingFileName[200],queryFileName[200];
 	sprintf(sFileName,"%s/numVAttr=%dnumEAttr=%dmaxDom=%dnumSN=%dsySize=%dSuperGraph.txt",folderName,numVAttr,numEAttr,maxDom,numSuperNode,vSySize);
@@ -162,7 +165,7 @@ void Query(char const *argv[]){
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	int hashOptList[3] =   {1,1,0};
 	int heuristicList[3] = {1,0,0};
-	for(int i=0; i<1; i++){//CAUTION: set 1 HERE!!!!!!
+	for(int i=1; i<2; i++){//CAUTION: set 1 HERE!!!!!!
 		int hashOpt = hashOptList[i];
 		int heuristic = heuristicList[i];
 		int notReachableCount = 0;

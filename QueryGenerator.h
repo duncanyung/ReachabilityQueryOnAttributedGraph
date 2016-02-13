@@ -18,6 +18,7 @@ class QueryGenerator{
 
 
 	public:
+		void eraseConstraints(vector<vector<int> >&,int);
 		int getAttributeInfo(char*,vector<int>&);
 		void generateQuery(vector<query>&,int,const char*,vector<vector<pair<int,int> > >&,int,int,int,int);
 		void writeQueries(vector<query>&,const char*,int,int,int);

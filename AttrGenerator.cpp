@@ -11,7 +11,7 @@ int AttrGenerator::countIntDigit(int x){
 }
 */
 
-void AttrGenerator::_generateAttribute(const char* attrFolderName,vector<vector<pair<int,int> > >& topology,int numAttr,int maxDomainSize,bool isEdge,int numEdge = 0){
+void AttrGenerator::_generateAttribute(const char* attrFolderName,vector<vector<pair<int,int> > >& topology,int numAttr,int maxDomainSize,int rowSize,bool isEdge,int numEdge = 0){
 	srand(time(NULL));
 
 	char fileName[200],infoFileName[200];
@@ -31,9 +31,11 @@ void AttrGenerator::_generateAttribute(const char* attrFolderName,vector<vector<
 
 	vector<int> attrDomainSize;
 	for(int i=0; i<numAttr; i++){
-		int d = max(rand()%maxDomainSize,1);
-		attrDomainSize.push_back(d);
-		fprintf(outInfoFile,"%d ",d);
+//		int d = max(rand()%maxDomainSize,1);
+//		attrDomainSize.push_back(d);
+		attrDomainSize.push_back(maxDomainSize);
+//		fprintf(outInfoFile,"%d ",d);
+		fprintf(outInfoFile,"%d ",maxDomainSize);
 	}
 	fclose(outInfoFile);
 
@@ -63,7 +65,8 @@ void AttrGenerator::_generateAttribute(const char* attrFolderName,vector<vector<
 				attr.append(",");
 		}
 
-		int extraSpace = numDigit2 + (numAttr*numDigit1+numAttr+1) - attr.length();
+//		int extraSpace = numDigit2 + (numAttr*numDigit1+numAttr+1) - attr.length();
+		int extraSpace = rowSize - attr.length() - 1;
 
 		for(int j=0; j<extraSpace; j++)
 			attr.append(" ");
@@ -79,9 +82,9 @@ void AttrGenerator::_generateAttribute(const char* attrFolderName,vector<vector<
 }
 
 
-void AttrGenerator::generateAttribute(const char* attrFolderName,vector<vector<pair<int,int> > >& topology,int numVAttr,int numEAttr,int maxDomainSize,int numEdge){
+void AttrGenerator::generateAttribute(const char* attrFolderName,vector<vector<pair<int,int> > >& topology,int numVAttr,int numEAttr,int maxDomainSize,int numEdge,int vRowSize, int eRowSize){
 
-	_generateAttribute(attrFolderName,topology,numVAttr,maxDomainSize,false);
-	_generateAttribute(attrFolderName,topology,numEAttr,maxDomainSize,true,numEdge);
+	_generateAttribute(attrFolderName,topology,numVAttr,maxDomainSize,vRowSize,false);
+	_generateAttribute(attrFolderName,topology,numEAttr,maxDomainSize,eRowSize,true,numEdge);
 
 }

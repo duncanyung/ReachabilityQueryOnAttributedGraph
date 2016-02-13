@@ -17,7 +17,23 @@ int QueryGenerator::getAttributeInfo(char* attrInfoFileName, vector<int>& attrDo
 	return numAttr;
 }
 
-void QueryGenerator::generateQuery(vector<query>& queries,int numQuery,const char* folderName,vector<vector<pair<int,int> > >& topology,int numConstraint,int numVAttr,int numEAttr,int maxDom){
+void QueryGenerator::eraseConstraints(vector<vector<int> >& AttrCon,int numConstraintToErase){
+	srand(time(NULL));
+
+	for(int i=0;i<numConstraintToErase; i++){
+		int chooseAttr = rand()%AttrCon.size();
+		int size = AttrCon[chooseAttr].size();
+		if(size == 0){
+			i--;
+			continue;
+		}
+		int chooseConstraint = rand()%size;
+
+		AttrCon[chooseAttr].erase(AttrCon[chooseAttr].begin()+chooseConstraint,AttrCon[chooseAttr].begin()+chooseConstraint+1);
+	}
+}
+
+void QueryGenerator::generateQuery(vector<query>& queries,int numQuery,const char* folderName,vector<vector<pair<int,int> > >& topology,int numConstraintToErase,int numVAttr,int numEAttr,int maxDom){
 
 	char vertexAttrFileName[200],edgeAttrFileName[200],vertexAttrInfoFileName[200],edgeAttrInfoFileName[200];
 	sprintf(vertexAttrFileName,"%s/numVAttr=%dmaxDom=%dVertexAttr.txt",folderName,numVAttr,maxDom);
@@ -40,7 +56,7 @@ void QueryGenerator::generateQuery(vector<query>& queries,int numQuery,const cha
 
 		for(int j=0; j<numVAttr; j++){
 			int numCon = vertexAttrDomain[j];//rand()%vertexAttrDomain[j] + 1;
-//			int numCon = rand()%vertexAttrDomain[j] + 1;
+//			int numCon = vertexAttrDomain[j] - numConstraint;
 			unordered_set<int> existC;
 			vector<int> con;
 //			printf("DomainSize=%d\n",numCon);
@@ -58,9 +74,11 @@ void QueryGenerator::generateQuery(vector<query>& queries,int numQuery,const cha
 			q.vertexAttrCon.push_back(con);
 		}
 
+		eraseConstraints(q.vertexAttrCon,numConstraintToErase);
+
 		for(int j=0; j<numEAttr; j++){
 			int numCon = edgeAttrDomain[j];//rand()%edgeAttrDomain[j] + 1;
-//			int numCon = rand()%edgeAttrDomain[j] + 1;
+//			int numCon = edgeAttrDomain[j] - numConstraint;
 			unordered_set<int> existC;
 			vector<int> con;
 //			printf("DomainSize=%d\n",numCon);
@@ -80,6 +98,9 @@ void QueryGenerator::generateQuery(vector<query>& queries,int numQuery,const cha
 
 		if(i%10 == 0)
 			printf("Generating Query %d\n",i);
+
+
+
 
 		queries.push_back(q);
 	}
