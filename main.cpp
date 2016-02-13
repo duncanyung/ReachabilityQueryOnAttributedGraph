@@ -165,7 +165,7 @@ void Query(char const *argv[]){
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	int hashOptList[3] =   {1,1,0};
 	int heuristicList[3] = {1,0,0};
-	for(int i=1; i<2; i++){//CAUTION: set 1 HERE!!!!!!
+	for(int i=0; i<1; i++){//CAUTION: set 1 HERE!!!!!!
 		int hashOpt = hashOptList[i];
 		int heuristic = heuristicList[i];
 		int notReachableCount = 0;

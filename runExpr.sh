@@ -20,7 +20,7 @@ echo start_Run_Expr_Script
 	useConstraint=1
 	numSuperNode=1000
 	synopsisSize=30
-	numConstraint=0
+	numConstraint=2
 	
 
 	#generate Attribute
@@ -33,7 +33,7 @@ echo start_Run_Expr_Script
 #	./main 4 $fileName $folderName $numVAttr $numEAttr $numSuperNode $synopsisSize $vRowSize $maxDomainSize
 
 	#generate Queries
-#	./main 5 $fileName $numQuery $folderName $numVAttr $numEAttr $numConstraint $maxDomainSize
+	./main 5 $fileName $numQuery $folderName $numVAttr $numEAttr $numConstraint $maxDomainSize
 
 	#query algorithm
 	./main 6 $fileName $folderName $numEAttr $numVAttr $vRowSize $eRowSize $numQuery $useConstraint $numSuperNode $synopsisSize $maxDomainSize $outFolderName $numConstraint
